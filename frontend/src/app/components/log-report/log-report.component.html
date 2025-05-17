@@ -1,0 +1,39 @@
+<div class="log-container">
+  <div style="display: flex; justify-content: space-between;">
+    <div class="heading">
+      Log Report (Recent to Old)
+    </div>
+    <div class="download-section">
+      <div>
+        <input style="margin-right: 15px;" placeholder="From Date" class="textbox-n" type="text"
+          onfocus="(this.type='datetime-local')" onblur="(this.type='text')" [(ngModel)]="fromDate" id="fromDate"
+          class="options-item" />
+      </div>
+      <div>
+        <input style="margin-right: 15px;" placeholder="To Date" class="textbox-n" type="text"
+          onfocus="(this.type='datetime-local')" onblur="(this.type='text')" [(ngModel)]="toDate" id="toDate"
+          class="options-item" />
+      </div>
+      <div><button (click)="downloadLogReport()" class="download-btn">Download PDF</button></div>
+    </div>
+  </div>
+
+  <div style="height: 400px; overflow-y: scroll; margin-top: 20px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Username</th>
+          <th>Action(login/logout)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of logReports">
+          <td>{{ formatDate(log.timestamp) || '--' }}</td>
+          <td>{{ log.username }}</td>
+          <td>{{ log.action }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

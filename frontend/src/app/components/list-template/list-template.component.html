@@ -1,0 +1,164 @@
+<div class="list-template-box">
+  <div style="display: flex; justify-content: space-between;">
+    <div class="heading">
+      List Template
+    </div>
+    <div class="live-serach">
+      <div><input class="search-input" type="text" placeholder="Enter template Name" [(ngModel)]="searchQuery"
+          (input)="filterTemplates()"></div>
+      <div (click)="navigateTo('create')"> <img src="../../../assets/images/create-circle.png" class="nav-item-img"
+          title="Create">
+      </div>
+    </div>
+  </div>
+  <div style="height: 400px; overflow-y: scroll; margin-top: 20px;">
+    <table>
+      <thead>
+        <tr>
+          <th>
+          </th>
+          <th><div style="display: flex;">ID<img (click)="sortDataById()" class="sort-btn" src="../../../assets/images/arrow (1).png"></div> </th>
+          <th><div style="display: flex;">Name<img (click)="sortByName()" class="sort-btn"  src="../../../assets/images/arrow (1).png"></div> </th>
+          <th><div style="display: flex;">Report Group<img (click)="sortByGroup()" class="sort-btn" style="margin-top: 9px;" src="../../../assets/images/arrow (1).png"></div> </th>
+          <th>Additional Info</th>
+          <th>Parameters</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredData; let i = index">
+          <td><input type="checkbox" [(ngModel)]="item.selected" class="checkbox"></td>
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.report_group }}</td>
+          <td>{{ item.additionalInfo }}</td>
+          <td style="cursor: pointer; text-align: left;">
+            <span (click)="toggleParameterDetails(i)" class="button">{{ getShortParameters(item.parameters) }}</span>
+            <div *ngIf="isParameterDetailsVisible(i)" class="parameter-details">
+              <button (click)="toggleParameterDetails(i)"
+                style="background-color: #36454F; border: none; margin-left: 95%;">
+                <img class="cancel-img" src="../../../assets/images/cancel.png">
+              </button>
+              <div *ngFor="let param of item.parameters">{{ param }}</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <button class="action-btn btn" (click)="editSelected()">Edit</button>
+  <!-- <button class="action-btn btn" (click)="deleteSelected()">Delete</button>   -->
+
+  <div *ngIf="isEditVisible" class="edit-template-box">
+    <h3>Edit Template</h3>
+    <form (ngSubmit)="saveEdit()">
+      <div style="display: flex; justify-content: space-between;">
+        <div style="display: flex; flex-direction: column ;">
+          <label>Name: </label>
+          <input type="text" [(ngModel)]="selectedTemplate.name" name="name" class="options-item">
+        </div>
+
+        <div style="display: flex; flex-direction: column ;">
+          <label>Report Group: </label>
+          <div class="dropdown-container" (click)="toggleGroupDropdown()">
+
+            <div class="dropdown options-item-width">
+              {{ selectedGroup || 'Select a Group' }}
+            </div>
+            <div class="dropdown-content" *ngIf="isGroupDropdownOpen" (click)="$event.stopPropagation()">
+              <div *ngFor="let group of groupNameList">
+                <input type="radio" [value]="group" [(ngModel)]="selectedGroup" name="report_group"> {{ group }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column ;">
+          <label>Additional Info: </label>
+          <div class="dropdown-container" (click)="toggleDropdown('info')">
+            <div class="dropdown options-item-width">
+              {{ selectedAdditionalInfo.length > 0 ? selectedAdditionalInfo + ' selected' : 'Select Additional Info' }}
+            </div>
+            <div class="dropdown-content" *ngIf="isInfoDropdownOpen" (click)="$event.stopPropagation()">
+              <div *ngFor="let info of additionalInfoList">
+                <input type="checkbox" [value]="info" [checked]="selectedAdditionalInfo.includes(info)"
+                  (change)="onAdditionalInfoChange($event)"> {{ info }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; margin-top: 100px;">
+        <!-- Selected Parameters -->
+        <div style="display: flex; flex-direction: column;">
+          <label>Selected Parameters: </label>
+          <div class="dropdown-container">
+            <div class="dropdown options-item-parameter parameter">
+              {{ selectedParameters.length > 0 ? selectedParameters.length + ' selected' : 'Select Parameters' }}
+            </div>
+            <div class="dropdown-content-parameter">
+              <div *ngFor="let param of selectedParameters; let i = index">
+                <input type="checkbox" [value]="param.baseName" [checked]="true" (change)="onParameterChange($event)">
+                <span>{{ param.baseName }}</span>
+                <div class="range-inputs">
+                  <span>Select Range: </span>
+                  <input type="number" 
+                         [(ngModel)]="param.range.min" 
+                         min="-200" 
+                         max="500" 
+                         placeholder="From"
+                         [ngModelOptions]="{standalone: true}"
+                         [style.border-color]="!validateRange(param) ? 'red' : ''">
+                  <input type="number" 
+                         [(ngModel)]="param.range.max" 
+                         min="-200" 
+                         max="500" 
+                         placeholder="To"
+                         [ngModelOptions]="{standalone: true}"
+                         [style.border-color]="!validateRange(param) ? 'red' : ''">
+                  <div *ngIf="!validateRange(param)" style="color: red; font-size: 12px;">
+                    Start range must be less than end range
+                  </div>
+                  <div>
+                    <label>Units:</label>
+                    <input type="text" [(ngModel)]="param.range.unit" placeholder="e.g. kWh"
+                      [ngModelOptions]="{standalone: true}">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Available Parameters -->
+        <div style="display: flex; flex-direction: column; margin-left: 27%;">
+          <label>Available Parameters: </label>
+          <div class="dropdown-container">
+            <div class="dropdown options-item-parameter">
+              {{ unselectedParameters.length > 0 ? unselectedParameters.length + ' available' : 'No available parameters' }}
+            </div>
+            <div class="dropdown-content-parameter">
+              <div *ngFor="let param of unselectedParameters">
+                <input type="checkbox" [value]="param" (change)="onParameterChange($event)"> {{ param }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" (click)="cancelEdit()" class="action-btn m-l btn">Cancel</button>
+      <button type="submit" class="action-btn m-l btn">Save</button>
+    </form>
+  </div>
+</div>
+
+<!-- Confirmation Popup for Deletion -->
+<div class="confirmation-popup" *ngIf="isDeletePopupVisible">
+  <div class="popup-content">
+    <div class="popup-header">
+      <h3>Are you sure you want to delete the selected template(s)?</h3>
+    </div>
+    <div class="popup-actions">
+      <button class="ok-btn btn" (click)="confirmDeletion()">OK</button>
+      <button class="cancel-btn btn" (click)="cancelDeletion()">Cancel</button>
+    </div>
+  </div>
+</div>

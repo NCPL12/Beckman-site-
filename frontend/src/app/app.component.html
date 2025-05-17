@@ -1,0 +1,15 @@
+
+
+<header *ngIf="showHeaderAndSidebar"></header>
+<div class="main-div" *ngIf="showHeaderAndSidebar">
+  <side-bar></side-bar>
+  <router-outlet></router-outlet> 
+</div>
+<div *ngIf="!showHeaderAndSidebar">
+  <router-outlet></router-outlet>
+</div>
+
+
+
+
+

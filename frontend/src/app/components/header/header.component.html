@@ -1,0 +1,24 @@
+<div class="header">
+    <div class="company-logo">
+        <a href="https://ncpl.co/" target="_blank"><img class="company-logo-img" src="/assets/images/Neptune Logo Square_Blue.png"></a>
+    </div>
+    <div class="header-title">
+        <div>BMS REPORTING MANAGER</div>
+        <div *ngIf="isLoggedIn()" class="user-info" style="margin-right: 20px; display: flex;">
+            <div style=" margin-top: 3px;"><span>{{ username }} ({{ role }})</span></div>
+            <div style="margin-left: 10px;">
+                <img class="logout-btn" src="/assets/images/power-off.png" (click)="confirmLogout()"
+                    title="Logout">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Dialog -->
+<div *ngIf="showConfirmLogout" class="dialog-overlay">
+    <div class="dialog">
+        <p>Are you sure you want to log out?</p>
+        <button (click)="handleLogoutConfirm(true)">OK</button>
+        <button (click)="handleLogoutConfirm(false)">Cancel</button>
+    </div>
+</div>

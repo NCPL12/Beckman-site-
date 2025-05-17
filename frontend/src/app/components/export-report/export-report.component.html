@@ -1,0 +1,138 @@
+<div class="export-report-box">
+    <div class="heading">
+        Export / Schedule Report
+    </div>
+    <div class="options">
+
+        <div style="display: flex; flex-direction: column;">
+            <div class="templates-div">
+                <select [(ngModel)]="selectedTemplate" class="options-item-dropdown" style="margin-top: 20px;">
+                    <option [ngValue]="null" disabled>Select Template Name</option>
+                    <option *ngFor="let report of reports" [ngValue]="report">
+                        {{ report.id + "    "+ report.name }}
+                    </option>
+                </select>
+            </div>
+            <!-- <div class="assign-div">
+                    <select id="assign-select" [(ngModel)]="assignedTo" class=" options-item-dropdown"
+                        style="margin-top: 20px;">
+                        <option value="" disabled selected>Assign For Review</option>
+                        <option *ngFor="let user of users" [value]="user.username">{{ user.username }}, {{user.role}}</option>
+                    </select>
+            </div>
+            <div class="approve-div">
+                <div class="dropdown-container">
+                    <div class="approve-chk-box"><input type="checkbox" class="chk-box"
+                            [(ngModel)]="isApproverRequired"><span class="approve-chk-heading">Check if report need
+                            approver </span></div>
+                    <div *ngIf="isApproverRequired"><select [(ngModel)]="assignedApprover"
+                            class=" options-item-dropdown" style="margin-top: 20px;">
+                            <option value="" disabled selected>Assign For Approver</option>
+                            <option *ngFor="let user of users" [value]="user.username">{{ user.username }}, {{user.role}}</option>
+                        </select></div>
+                </div>
+            </div> -->
+        </div>
+        <!-- <div class="export-type-container">
+            <label>
+                <input type="radio" name="exportType" value="manual" [(ngModel)]="exportType"
+                    (change)="onExportTypeChange()" />
+                Manual Export
+            </label>
+            <label>
+                <input type="radio" name="exportType" value="schedule" [(ngModel)]="exportType"
+                    (change)="onExportTypeChange()" />
+                Schedule Export
+            </label>
+        </div> -->
+        <div *ngIf="exportType === 'manual'">
+            <div class="date-div">
+              <div>
+                <input placeholder="From Date" class="textbox-n" type="text"
+                       onfocus="(this.type='datetime-local')" onblur="(this.type='text')"
+                       [(ngModel)]="fromDate" id="fromDate" class="options-item"
+                       max="9999-12-31T23:59" />
+              </div>
+              <div style="margin-top: 20px;">
+                <input placeholder="To Date" class="textbox-n" type="text"
+                       onfocus="(this.type='datetime-local')" onblur="(this.type='text')"
+                       [(ngModel)]="toDate" id="toDate" class="options-item"
+                       max="9999-12-31T23:59" />
+              </div>
+              <div *ngIf="dateError" class="error-msg" style="font-size: 14px; color: red; display: flex; align-items: center; justify-content: center;">
+                {{ dateError }}
+              </div>
+              <!-- <div class="or-vid">OR</div>
+              
+              <div class="dropdown-container">
+                <select [(ngModel)]="predefinedReport" (change)="onPredefinedReportChange()" class="options-item-dropdown">
+                  <option value="" disabled selected>Select Predefined Report</option>
+                  <option value="yesterday">Yesterday Report</option>
+                  <option value="oneWeek">One Week Report</option>
+                  <option value="oneMonth">One Month Report</option>
+                </select>
+              </div> -->
+            </div>
+          </div>          
+
+        <div *ngIf="exportType === 'schedule'">
+
+            <div class="assign-div">
+                <div class="dropdown-container">
+                    <select id="schedule-select" [(ngModel)]="scheduleFrequency"
+                        class="dropdown options-item options-item-select">
+                        <option value="" disabled selected>Select Schedule Frequency</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div *ngIf="scheduleFrequency === 'daily'" class="assign-div-daily">
+                <select [(ngModel)]="dailyTime" class="options-item-dropdown">
+                    <option [ngValue]="null" disabled>Select Time</option>
+                    <option *ngFor="let hour of hoursList" [value]="hour">{{ hour }}:00</option>
+                </select>
+            </div>
+
+            <div *ngIf="scheduleFrequency === 'weekly'" class="assign-div-weekly">
+                <div>
+                <select id="weeklyDay" [(ngModel)]="weeklyDay" class="options-item-dropdown">
+                    <option value="" disabled selected>Select Day</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select>
+            </div>
+            <div style=" margin-top: 15px;">
+                <select [(ngModel)]="weeklyTime" class="options-item-dropdown">
+                    <option [ngValue]="null" disabled>Select Time</option>
+                    <option *ngFor="let hour of hoursList" [value]="hour">{{ hour }}:00</option>
+                </select>
+            </div>
+            </div>
+        
+            <div *ngIf="scheduleFrequency === 'monthly'" class="assign-div-monthly">
+                <div>
+                <select [(ngModel)]="monthlyDay" class="options-item-dropdown">
+                    <option [ngValue]="null" disabled>Select Day</option>
+                    <option *ngFor="let day of daysList" [value]="day">{{ day }}</option>
+                </select>
+            </div>
+                <div style=" margin-top: 15px;">
+                <select [(ngModel)]="monthlyTime" class="options-item-dropdown">
+                    <option [ngValue]="null" disabled>Select Time</option>
+                    <option *ngFor="let hour of hoursList" [value]="hour">{{ hour }}:00</option>
+                </select>
+            </div>
+            </div>
+        </div>
+    </div>
+    <button (click)="submit()" class="submit-btn btn">Submit</button>
+</div>

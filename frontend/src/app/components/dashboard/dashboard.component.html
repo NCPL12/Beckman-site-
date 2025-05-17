@@ -1,0 +1,54 @@
+<div class="dashboard-container" >
+
+  <div class="dropdown-container">
+    <select class="dropdown options-item options-item-select" [(ngModel)]="selectedReportType" (change)="onReportTypeChange()">
+      <option value="manual" selected>Manually Generated Reports</option>
+      <option value="daily">Daily Automatic Generated Reports</option>
+      <option value="weekly">Weekly Automatic Generated Reports</option>
+      <option value="monthly">Monthly Automatic Generated Reports</option>
+    </select>
+  </div>
+
+  <div style="display: flex;">
+
+  <div class="pie-chart-container">
+    <div class="pie-chart" [ngStyle]="{'--approved-percentage': approvedPercentage + '%'}"></div>
+    <div class="center"></div>
+  </div> 
+
+  <div class="labels">
+    <div style="margin-bottom: 15px;">Manually Generated Reports </div>
+    <table class="report-summary-table">
+      <thead>
+        <tr>
+          <th>Report Type</th>
+          <th>Count</th>
+          <th>Percentage</th>
+          <th>Display</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Total generated</td>
+          <td>{{ approvedCount + pendingCount }}</td>
+          <td>100%</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Approved  </td>
+          <td>{{ approvedCount }}</td>
+          <td>{{approvedPercentage}}%</td>
+          <td><div class="approved-color-box"></div></td>
+        </tr>
+        <tr>
+          <td>Pending For Approve </td>
+          <td>{{ pendingCount }}</td>
+          <td>{{100 - approvedPercentage}}%</td>
+          <td><div class="pending-color-box"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>

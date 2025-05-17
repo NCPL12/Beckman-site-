@@ -1,0 +1,26 @@
+html {
+    font-family: sans-serif;
+}
+
+body {
+    margin: 0;
+    background-color: #343434;
+}
+
+.btn {
+    height: 38px;
+    width: 115px;
+    border-radius: 5px;
+    background: #0056b3;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.2), 0 2px 7px 0 rgba(0, 0, 0, 0.19);
+    cursor: pointer;
+}
+.checkbox{
+    cursor: pointer;
+}
+
+input{
+    cursor: pointer;
+}

@@ -1,0 +1,129 @@
+<div class="create-template-box">
+  <div class="heading">Create Template</div>
+
+  <div class="options">
+    <div>
+      
+      <div>
+        <input type="text" placeholder="Report Name" class="options-item" [(ngModel)]="reportName"
+          (ngModelChange)="validateReportName()" [ngClass]="{'invalid': reportNameError}">
+        <div *ngIf="reportNameError" class="error-msg">{{ reportNameError }}</div>
+      </div>
+
+      <div class="dropdown-container" style="margin-top: 90px;">
+        <select id="group-select" class="dropdown options-item options-item-select" [(ngModel)]="groupName"
+          (change)="validateGroupName()" [ngClass]="{'invalid': groupNameError}">
+          <option value="" disabled selected>Select a Group</option>
+          <option *ngFor="let group of groupNameList" [value]="group">{{ group }}</option>
+        </select>
+        <div *ngIf="groupNameError" class="error-msg">{{ groupNameError }}</div>
+      </div>
+
+      <div class="dropdown-container" style="margin-top: 90px;" (click)="toggleAdditionalInfoDropdown()">
+        <div class="dropdown options-item-parameter" [ngClass]="{'invalid': additionalInfoError}">
+          {{ selectedAdditionalInfo.length > 0 ? selectedAdditionalInfo.length + ' selected' : 'Select Additional Info'
+          }}
+        </div>
+        <div *ngIf="additionalInfoError" class="error-msg">{{ additionalInfoError }}</div>
+        <div class="dropdown-content" *ngIf="isAdditionalInfoDropdownOpen" (click)="$event.stopPropagation()">
+          <div *ngFor="let info of additionalInfo" style="display: flex;">
+            <input type="checkbox" [value]="info" [checked]="isAdditionalInfoSelected(info)"
+              (change)="onAdditionalInfoChange($event)">
+            {{ info }}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div>
+
+      <!-- <div class="dropdown-container" (click)="toggleDropdown()">
+        <div class="dropdown options-item-parameter" [ngClass]="{'invalid': parametersError}">
+          {{ selectedParameters.length > 0 ? selectedParameters.length + ' selected' : 'Select Parameters' }}
+        </div>
+        <div *ngIf="parametersError" class="error-msg">{{ parametersError }}</div>
+
+        <div class="dropdown-content" (click)="$event.stopPropagation()">
+          <div *ngFor="let param of parameters; let i = index" class="dropdown-item" >
+            <input type="checkbox" [value]="param" [checked]="isSelected(param)" (change)="onParameterChange($event)">
+            <span>{{ param }}</span>
+
+            <div *ngIf="isSelected(param)">
+              <input type="checkbox" [(ngModel)]="parameterRanges[param].addRange"
+                (change)="updateParameterRange(param)">
+              <span>Add Range</span>
+            </div>
+
+            <div *ngIf="isSelected(param) && parameterRanges[param]?.addRange" class="range-inputs">
+              <span>Select Range: </span>
+
+              <input type="number" [(ngModel)]="parameterRanges[param].min" min="-200" max="500" placeholder="From"
+                (ngModelChange)="updateParameterRange(param)">
+              <input type="number" [(ngModel)]="parameterRanges[param].max" min="-200" max="500" placeholder="To"
+                (ngModelChange)="updateParameterRange(param)">
+            </div>
+          </div>
+        </div>
+      </div> -->
+      
+      <div class="dropdown-container" (click)="toggleDropdown()">
+        <div class="dropdown options-item-parameter" [ngClass]="{'invalid': parametersError}">
+          {{ selectedParameters.length > 0 ? selectedParameters.length + ' selected' : 'Select Parameters' }}
+        </div>
+        <div *ngIf="parametersError" class="error-msg">{{ parametersError }}</div>
+      
+        <div class="dropdown-content" (click)="$event.stopPropagation()">
+          <!-- Search input to filter parameters -->
+          <input type="text" placeholder="Search parameters" [(ngModel)]="searchTerm" class="search-input"  />
+      
+          <!-- Display filtered parameters -->
+          <div *ngFor="let param of filteredParameters" class="dropdown-item">
+            <input type="checkbox" [value]="param" [checked]="isSelected(param)" (change)="onParameterChange($event)">
+            <span>{{ param }}</span>
+      
+            <div *ngIf="isSelected(param)">
+              <input type="checkbox" [(ngModel)]="parameterRanges[param].addRange" (change)="updateParameterRange(param)">
+              <span>Add Range & Units</span>
+            </div>
+      
+            <div *ngIf="isSelected(param) && parameterRanges[param]?.addRange" class="range-inputs">
+              <span>Select Range: </span>
+              <input type="number" [(ngModel)]="parameterRanges[param].min" min="-200" max="500" placeholder="From"
+                     (ngModelChange)="updateParameterRange(param)">
+              <input type="number" [(ngModel)]="parameterRanges[param].max" min="-200" max="500" placeholder="To"
+                     (ngModelChange)="updateParameterRange(param)">
+            
+              <div *ngIf="parameterRanges[param]?.rangeError" style="color: red; font-size: 0.8rem;">
+                {{ parameterRanges[param].rangeError }}
+              </div>
+            
+              <div>
+                <label>Units: </label>
+                <input type="text" [(ngModel)]="parameterRanges[param].unit" (ngModelChange)="updateParameterRange(param)">
+              </div>
+              
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      
+
+    </div>
+  </div>
+  <button class="goBack-btn btn" (click)="goBack()">Go Back</button>
+  <button class="submit-btn btn" (click)="showConfirmationPopup()">Submit</button>
+</div>
+
+<div class="confirmation-popup" *ngIf="isPopupVisible">
+  <div class="popup-content">
+    <div class="popup-header">
+      <h3>Are you sure you want to add the template?</h3>
+    </div>
+    <div class="popup-actions">
+      <button class="ok-btn btn" (click)="confirmSubmission()">OK</button>
+      <button class="cancel-btn btn" (click)="cancelSubmission()">Cancel</button>
+    </div>
+  </div>
+</div>
