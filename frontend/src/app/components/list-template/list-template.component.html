@@ -98,7 +98,7 @@
               <div *ngFor="let param of selectedParameters; let i = index">
                 <input type="checkbox" [value]="param.baseName" [checked]="true" (change)="onParameterChange($event)">
                 <span>{{ param.baseName }}</span>
-                <div class="range-inputs">
+                <!-- <div class="range-inputs">
                   <span>Select Range: </span>
                   <input type="number" 
                          [(ngModel)]="param.range.min" 
@@ -122,7 +122,7 @@
                     <input type="text" [(ngModel)]="param.range.unit" placeholder="e.g. kWh"
                       [ngModelOptions]="{standalone: true}">
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>

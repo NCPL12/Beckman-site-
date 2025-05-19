@@ -99,57 +99,18 @@ public class PdfService {
         return jdbcTemplate.queryForObject(sql, new Object[]{templateId}, String.class);
     }
     public String getDynamicReportHeading(Long templateId) {
-        log.info("🔍 Starting getDynamicReportHeading for templateId = {}", templateId);
-
         try {
-            ReportTemplate template = templateService.getById(templateId);
-            List<String> parameters = template.getParameters();
-
-            log.info("🧩 Raw Parameters: {}", parameters);
-            if (parameters == null || parameters.isEmpty()) {
-                log.warn("⚠️ No parameters found in template {}", templateId);
-                return "";
+            String roomInfo = getRoomIdAndName(templateId); // e.g., "Room ID & Name: BDC012 & Sample Room"
+            if (roomInfo != null && roomInfo.contains(":")) {
+                String[] parts = roomInfo.split(":");
+                if (parts.length > 1) {
+                    return "EMS Report - " + parts[1].trim();
+                }
             }
-
-            // Extract base parameters
-            List<String> baseParams = parameters.stream()
-                    .map(this::extractBaseParameter)
-                    .distinct()
-                    .toList();
-
-            log.info("🧩 Base Parameter Names: {}", baseParams);
-
-            if (baseParams.isEmpty()) {
-                return "";
-            }
-
-            String inSql = String.join(",", Collections.nCopies(baseParams.size(), "?"));
-            String sql = "SELECT DISTINCT HeaderName FROM ParameterHeaders WHERE SetPointName IN (" + inSql + ")";
-            log.info("🟡 Executing header fetch SQL: {}", sql);
-
-            List<String> headers = jdbcTemplate.queryForList(sql, baseParams.toArray(), String.class);
-            List<String> uniqueHeaders = headers.stream()
-                    .filter(Objects::nonNull)
-                    .filter(h -> !h.trim().equalsIgnoreCase("null"))
-                    .map(String::trim)
-                    .distinct()
-                    .toList();
-
-            log.info("✅ Unique Headers fetched: {}", uniqueHeaders);
-
-            if (uniqueHeaders.isEmpty()) {
-                return "";
-            } else if (uniqueHeaders.size() == 1) {
-                return uniqueHeaders.get(0) + " Report";
-            } else {
-                String joined = String.join(", ", uniqueHeaders.subList(0, uniqueHeaders.size() - 1)) +
-                        " and " + uniqueHeaders.get(uniqueHeaders.size() - 1);
-                return joined + " Report";
-            }
-
+            return "EMS Report";
         } catch (Exception e) {
-            log.error("❌ Error in getDynamicReportHeading for templateId = {}", templateId, e);
-            return "";
+            log.error("❌ Failed to generate static heading", e);
+            return "EMS Report";
         }
     }
 
@@ -351,7 +312,7 @@ public class PdfService {
         document.close();
 
         String dynamicHeading = getDynamicReportHeading(templateId);
-        String cleanHeading = dynamicHeading.replaceAll("[^a-zA-Z0-9]", "_");
+        String cleanHeading = dynamicHeading.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("_+", "_");
         String pdfFileName = cleanHeading + ".pdf";
         long currentTimeMillis = System.currentTimeMillis();
         String currentDateStr = Long.toString(currentTimeMillis);
@@ -616,7 +577,7 @@ public class PdfService {
                 headerTable.setWidthPercentage(100);
                 headerTable.setWidths(new float[]{40f, 40f, 20f});  // Logo gets rightmost 20%
 
-                Font fontAddress = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, Font.ITALIC); // CORRECT
+                Font fontAddress = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16); // CORRECT
 
                 PdfPCell addressCell = new PdfPCell(new Paragraph(address, fontAddress));
                 addressCell.setBorder(Rectangle.NO_BORDER);
@@ -645,14 +606,14 @@ public class PdfService {
                 logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
                 // Title row (spans all columns)
-                String dynamicHeading = pdfService.getDynamicReportHeading(templateId);
-                PdfPCell titleCell = new PdfPCell(new Paragraph(dynamicHeading, fontTitle));
-                titleCell.setColspan(3);
-                titleCell.setBorder(Rectangle.NO_BORDER);
-                titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                titleCell.setPaddingTop(5);
-                titleCell.setPaddingBottom(10);
+//                String dynamicHeading = pdfService.getDynamicReportHeading(templateId);
+//                PdfPCell titleCell = new PdfPCell(new Paragraph(dynamicHeading, fontTitle));
+//                titleCell.setColspan(3);
+//                titleCell.setBorder(Rectangle.NO_BORDER);
+//                titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                titleCell.setPaddingTop(5);
+//                titleCell.setPaddingBottom(10);
 
                 // Sub-info row (Room, Sensor, Date, etc.)
                 PdfPCell infoCell = new PdfPCell();
@@ -687,7 +648,7 @@ public class PdfService {
                 headerTable.addCell(addressCell);
                 headerTable.addCell(centerCell);
                 headerTable.addCell(logoCell);
-                headerTable.addCell(titleCell);
+//                headerTable.addCell(titleCell);
                 headerTable.addCell(infoCell);
 
                 document.add(headerTable);
@@ -699,58 +660,31 @@ public class PdfService {
 
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
-            PdfPTable footerTable = new PdfPTable(2);
-            footerTable.setWidthPercentage(100);
-            try {
-                footerTable.setWidths(new float[]{50f, 50f});
-            } catch (DocumentException e) {
-                throw new RuntimeException(e);
-            }
-
-            Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
-            LocalDateTime currentDate = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMMM-yyyy HH:mm:ss");
-            String formattedDate = currentDate.format(formatter);
-
-            // Right side: Printed info
-            PdfPCell cellRight = new PdfPCell(new Phrase("Printed on: " + formattedDate + "\nPrinted By: " + username, fontTitle));
-            cellRight.setBorder(Rectangle.NO_BORDER);
-            cellRight.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cellRight.setPaddingRight(10);
-
-            // Left side: Review info
-            String reviewInfo = "";
-            if (reviewedBy != null && !reviewedBy.isEmpty()) {
-                reviewInfo = "Reviewed By: " + reviewedBy + "\nReview Date: " + reviewDate;
-            }
-            PdfPCell cellLeft = new PdfPCell(new Phrase(reviewInfo, fontTitle));
-            cellLeft.setBorder(Rectangle.NO_BORDER);
-            cellLeft.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cellLeft.setPaddingLeft(10);
-
-            footerTable.addCell(cellLeft);
-            footerTable.addCell(cellRight);
-
-            // Page number: "Page X of "
             PdfContentByte cb = writer.getDirectContent();
             cb.beginText();
             cb.setFontAndSize(baseFont, 10);
-            String text = "Page " + writer.getPageNumber() + " of ";
-            float textBase = document.bottom() - 10;
-            float textSize = baseFont.getWidthPoint(text, 10);
-            float adjustX = (document.right() + document.left()) / 2 - textSize / 2;
 
-            cb.setTextMatrix(adjustX, textBase);
-            cb.showText(text);
+            int pageNumber = writer.getPageNumber();
+            String text = "Printed On: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yy HH:mm")) +
+                    "\nPrinted By: " + username +
+                    "\nPage No: " + pageNumber + " of ";
+
+            float x = document.right() - 120;
+            float y = document.bottom() - 10;
+
+            // Multiline positioning manually
+            cb.setTextMatrix(x, y + 20);
+            cb.showText("Printed On: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yy HH:mm")));
+
+            cb.setTextMatrix(x, y + 8);
+            cb.showText("Printed By: " + username);
+
+            String pageText = "Page No: " + pageNumber + " of ";
+            cb.setTextMatrix(x, y - 4);
+            cb.showText(pageText);
+
             cb.endText();
-            cb.addTemplate(totalPageTemplate, adjustX + textSize, textBase); // 👈 adds the final page count later
-
-            try {
-                footerTable.setTotalWidth(document.right() - document.left());
-                footerTable.writeSelectedRows(0, -1, document.leftMargin(), document.bottomMargin() + 20, cb);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
+            cb.addTemplate(totalPageTemplate, x + baseFont.getWidthPoint(pageText, 10), y - 4);
         }
 
 

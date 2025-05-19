@@ -82,10 +82,10 @@
             <input type="checkbox" [value]="param" [checked]="isSelected(param)" (change)="onParameterChange($event)">
             <span>{{ param }}</span>
       
-            <div *ngIf="isSelected(param)">
+            <!-- <div *ngIf="isSelected(param)">
               <input type="checkbox" [(ngModel)]="parameterRanges[param].addRange" (change)="updateParameterRange(param)">
               <span>Add Range & Units</span>
-            </div>
+            </div> -->
       
             <div *ngIf="isSelected(param) && parameterRanges[param]?.addRange" class="range-inputs">
               <span>Select Range: </span>
