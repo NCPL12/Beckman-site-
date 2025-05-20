@@ -67,7 +67,7 @@ public class PdfService {
         List<String> parameters = template.getParameters();
 
         // Step 1: Fetch all room mappings from DB
-        String sql = "SELECT TABLE_NAME, Building_Id, Building_Name FROM beckman_room_data";
+        String sql = "SELECT TABLE_NAME, Room_ID, Room_Name FROM beckman_room_data";
         List<Map<String, Object>> roomMappings = jdbcTemplate.queryForList(sql);
 
         // Step 2: Match parameter column with TABLE_NAME in the mapping
@@ -75,8 +75,8 @@ public class PdfService {
             for (Map<String, Object> row : roomMappings) {
                 String tableName = String.valueOf(row.get("TABLE_NAME")).trim();
                 if (param.equalsIgnoreCase(tableName)) {
-                    String buildingId = String.valueOf(row.get("Building_Id")).trim();
-                    String buildingName = String.valueOf(row.get("Building_Name")).trim();
+                    String buildingId = String.valueOf(row.get("Room_ID")).trim();
+                    String buildingName = String.valueOf(row.get("Room_Name")).trim();
                     return "Room ID & Name: " + buildingId + " & " + buildingName;
                 }
             }
@@ -116,6 +116,19 @@ public class PdfService {
 
     // This method should already exist in your service
 
+    private Map<String, String> getTableToHeaderMap() {
+        String sql = "SELECT TABLE_NAME, Header_Name FROM beckman_room_data";
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+        Map<String, String> map = new HashMap<>();
+
+        for (Map<String, Object> row : rows) {
+            String tableName = String.valueOf(row.get("TABLE_NAME")).trim();
+            String headerName = String.valueOf(row.get("Header_Name")).trim();
+            map.put(tableName, headerName);
+        }
+
+        return map;
+    }
 
     private void addColorLegend(Document document) throws DocumentException {
         PdfPTable legendTable = new PdfPTable(2);
@@ -487,7 +500,8 @@ public class PdfService {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 
         ReportTemplate template = templateService.getById(templateId);
-        Map<String, String> formattedParameters = extractFormattedParameterRanges(templateId);
+        Map<String, String> tableToHeaderMap = getTableToHeaderMap();
+
 
         // Timestamp header
         cell.setPhrase(new Phrase("Timestamp", font));
@@ -495,7 +509,7 @@ public class PdfService {
 
         // Parameter headers with range only if explicitly set
         for (String parameter : template.getParameters()) {
-            String baseFormattedName = formattedParameters.get(parameter);
+            String baseFormattedName = tableToHeaderMap.getOrDefault(parameter, parameter);
             double fromValue = getFromValue(parameter);
             double toValue = getToValue(parameter);
 
