@@ -13,13 +13,13 @@
       <div class="dropdown-container" style="margin-top: 90px;">
         <select id="group-select" class="dropdown options-item options-item-select" [(ngModel)]="groupName"
           (change)="validateGroupName()" [ngClass]="{'invalid': groupNameError}">
-          <option value="" disabled selected>Select a Group</option>
+          <option value="" disabled selected>Select  Sensor ID</option>
           <option *ngFor="let group of groupNameList" [value]="group">{{ group }}</option>
         </select>
         <div *ngIf="groupNameError" class="error-msg">{{ groupNameError }}</div>
       </div>
 
-      <div class="dropdown-container" style="margin-top: 90px;" (click)="toggleAdditionalInfoDropdown()">
+      <!-- <div class="dropdown-container" style="margin-top: 90px;" (click)="toggleAdditionalInfoDropdown()">
         <div class="dropdown options-item-parameter" [ngClass]="{'invalid': additionalInfoError}">
           {{ selectedAdditionalInfo.length > 0 ? selectedAdditionalInfo.length + ' selected' : 'Select Additional Info'
           }}
@@ -32,9 +32,9 @@
             {{ info }}
           </div>
         </div>
-      </div>
-
-    </div>
+      </div> -->
+   
+</div>
 
     <div>
 
@@ -80,12 +80,13 @@
           <!-- Display filtered parameters -->
           <div *ngFor="let param of filteredParameters" class="dropdown-item">
             <input type="checkbox" [value]="param" [checked]="isSelected(param)" (change)="onParameterChange($event)">
-            <span>{{ param }}</span>
+          <span>{{ getDisplayName(param) }}</span>
+
       
-            <!-- <div *ngIf="isSelected(param)">
+            <div *ngIf="isSelected(param)">
               <input type="checkbox" [(ngModel)]="parameterRanges[param].addRange" (change)="updateParameterRange(param)">
-              <span>Add Range & Units</span>
-            </div> -->
+              <span>Add Range </span>
+            </div>
       
             <div *ngIf="isSelected(param) && parameterRanges[param]?.addRange" class="range-inputs">
               <span>Select Range: </span>
@@ -98,10 +99,10 @@
                 {{ parameterRanges[param].rangeError }}
               </div>
             
-              <div>
+              <!-- <div>
                 <label>Units: </label>
                 <input type="text" [(ngModel)]="parameterRanges[param].unit" (ngModelChange)="updateParameterRange(param)">
-              </div>
+              </div> -->
               
             </div>
             

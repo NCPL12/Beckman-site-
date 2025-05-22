@@ -373,20 +373,93 @@ private exportReport(approverName: string | null): void {
       reportName: this.selectedTemplate.name
     };
 
-    console.log('Logging report generation:', logPayload);
+    // ✅ Step 1: Open blank tab
+    const newTab = window.open('', '_blank');
+    if (newTab) {
+      newTab.document.write(`
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generating Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      color: #444;
+    }
 
-    this.http.post(`${this.apiBaseUrl}/log-generated-report`, logPayload)
-      .subscribe(() => {
-        const url = `${this.apiBaseUrl}/exportReport?id=${this.selectedTemplate.id}&fromDate=${formattedFromDate}&toDate=${formattedToDate}&username=${username}&assignedTo=${this.assignedTo || ''}&assigned_approver=${approverName || ''}`;
-        window.open(url, '_blank');
+    .loader {
+      border: 8px solid #eee;
+      border-top: 8px solid #3f51b5;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    h2 {
+      font-weight: normal;
+    }
+
+    p {
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="loader"></div>
+  <h2>Generating Report...</h2>
+  <p>Please wait while your PDF is being prepared.</p>
+</body>
+</html>
+      `);
+    }
+
+    // ✅ Step 2: Log the generation and fetch PDF
+    this.http.post(`${this.apiBaseUrl}/log-generated-report`, logPayload).subscribe(() => {
+      const url = `${this.apiBaseUrl}/exportReport?id=${this.selectedTemplate.id}&fromDate=${formattedFromDate}&toDate=${formattedToDate}&username=${username}&assignedTo=${this.assignedTo || ''}&assigned_approver=${approverName || ''}`;
+
+      this.http.get(url, { responseType: 'blob' }).subscribe(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+
+        if (newTab) {
+          // ✅ Use iframe with onload event to ensure PDF is rendered before closing
+          newTab.document.body.innerHTML = `
+            <iframe id="pdfFrame" src="${blobUrl}" style="width:100vw;height:100vh;border:none;" onload="setTimeout(() => window.close(), 5000)"></iframe>
+          `;
+        }
       }, error => {
-        console.error('Error logging report generation', error);
-        alert('Failed to log the report generation. Please try again.');
+        if (newTab) {
+          newTab.document.body.innerHTML = '<p style="color: red;">❌ Failed to generate PDF. Please try again.</p>';
+        }
       });
+
+    }, error => {
+      alert('Failed to log report generation');
+      if (newTab) {
+        newTab.close();
+      }
+    });
   } else {
     alert('Please select a valid date range and template.');
   }
 }
+
+
 
   private scheduleDailyReport(): void {
     const username = localStorage.getItem('username');

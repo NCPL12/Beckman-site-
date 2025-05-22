@@ -11,7 +11,7 @@
 	<groupId>ncpl.bms.reports</groupId>
 	<artifactId>bms-reports</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>bms-reports</name>
 	<description>BMS reporting tool</description>
 	<properties>

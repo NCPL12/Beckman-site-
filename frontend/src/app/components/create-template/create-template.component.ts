@@ -76,17 +76,23 @@ export class CreateTemplateComponent implements OnInit {
   toggleAdditionalInfoDropdown(): void {
     this.isAdditionalInfoDropdownOpen = !this.isAdditionalInfoDropdownOpen;
   }
+  getDisplayName(param: string): string {
+  return param.startsWith('EMS_NEW_') ? param.replace('EMS_NEW_', '') : param;
+}
 
-  getParametersList(): void {
-    this.http.get(`${this.apiBaseUrl}/parameters`, { responseType: 'json' }).subscribe(
-      (data: any) => {
-        this.parameters = data;
-      },
-      (error) => {
-        console.error('Error fetching parameters', error);
-      }
-    );
-  }
+
+getParametersList(): void {
+  this.http.get<string[]>(`${this.apiBaseUrl}/parameters`).subscribe(
+    (data) => {
+      this.parameters = data; // DO NOT filter EMS_NEW_
+    },
+    (error) => {
+      console.error('Error fetching parameters', error);
+    }
+  );
+}
+
+
 
   isSelected(param: string): boolean {
     return this.selectedParameters.includes(param);
@@ -120,20 +126,17 @@ export class CreateTemplateComponent implements OnInit {
     }
   }
 
-  updateParameterRange(param: string): void {
-    const range = this.parameterRanges[param];
-    range.rangeError = '';
-    range.unitError = '';
+ updateParameterRange(param: string): void {
+  const range = this.parameterRanges[param];
+  range.rangeError = '';
 
-    if (range.addRange) {
-      if (range.min === null || range.max === null || range.min >= range.max) {
-        range.rangeError = 'Start range must be less than end range';
-      }
-      if (!range.unit || range.unit.trim() === '') {
-        range.unitError = 'Unit is required';
-      }
+  if (range.addRange) {
+    if (range.min === null || range.max === null || range.min >= range.max) {
+      range.rangeError = 'Start range must be less than end range';
     }
   }
+}
+
 
   onAdditionalInfoChange(event: any): void {
     const value = event.target.value;
@@ -192,12 +195,13 @@ export class CreateTemplateComponent implements OnInit {
     for (const param of this.selectedParameters) {
       const range = this.parameterRanges[param];
       if (range?.addRange) {
-        if (!range.unit || range.unit.trim() === '') {
-          range.unitError = 'Unit is required';
-          hasRangeUnitError = true;
-        } else {
-          range.unitError = '';
-        }
+      if (range.min === null || range.max === null || range.min >= range.max) {
+  range.rangeError = 'Start range must be less than end range';
+  hasRangeUnitError = true;
+} else {
+  range.rangeError = '';
+}
+
   
         if (range.min === null || range.max === null || range.min >= range.max) {
           range.rangeError = 'Start range must be less than end range';
@@ -209,7 +213,8 @@ export class CreateTemplateComponent implements OnInit {
     }
   
     if (hasRangeUnitError) {
-      alert('Please enter Units and valid Range for selected parameters with "Add Range & Units" checked.');
+    alert('Please enter a valid range for selected parameters with "Add Range & Units" checked.');
+
     }
   
     return !(

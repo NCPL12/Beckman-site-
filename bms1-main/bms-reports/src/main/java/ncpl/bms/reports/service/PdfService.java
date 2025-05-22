@@ -54,10 +54,10 @@ public class PdfService {
     private DateConverter dateConverter;
 
     private List<Map<String, Object>> reportDataList = null;
-    public String getSubArea(Long templateId) {
-        String sql = "SELECT report_group FROM report_template WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{templateId}, String.class);
-    }
+//    public String getSubArea(Long templateId) {
+//        String sql = "SELECT report_group FROM report_template WHERE id = ?";
+//        return jdbcTemplate.queryForObject(sql, new Object[]{templateId}, String.class);
+//    }
     public String getRoomIdAndName(Long templateId) {
         ReportTemplate template = templateService.getById(templateId);
         if (template == null || template.getParameters() == null || template.getParameters().isEmpty()) {
@@ -83,6 +83,10 @@ public class PdfService {
         }
 
         return "Room ID & Name: N/A";
+    }
+    public String getSubArea(Long templateId) {
+        String sql = "SELECT report_group FROM report_template WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{templateId}, String.class);
     }
 
 
@@ -223,8 +227,13 @@ public class PdfService {
         return result;
     }
 
+    // inside your generatePdf method (AFTER the signature)
     public void generatePdf(Long templateId, String fromDateTime, String toDate, String username, String assignedTo, String assigned_approver) throws Exception {
+        long start = System.currentTimeMillis();
+        System.out.println("⏱ [1] START PDF generation");
+
         reportDataList = reportDataService.generateReportData(templateId, fromDateTime, toDate);
+        System.out.println("⏱ [2] Data fetched in " + (System.currentTimeMillis() - start) + " ms");
 
         SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String formattedFromDateTime = dateTimeFormatter.format(new Date(Long.parseLong(fromDateTime)));
@@ -233,40 +242,40 @@ public class PdfService {
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         PdfWriter writer = PdfWriter.getInstance(document, byteArrayOutputStream);
+        System.out.println("⏱ [3] PDF Writer initialized in " + (System.currentTimeMillis() - start) + " ms");
 
         TablePageEvent event = new TablePageEvent(formattedFromDateTime, formattedToDateTime, username, templateId, this);
         writer.setPageEvent(event);
+        System.out.println("⏱ [4] PageEvent set in " + (System.currentTimeMillis() - start) + " ms");
 
         document.open();
+        System.out.println("⏱ [5] Document opened in " + (System.currentTimeMillis() - start) + " ms");
 
         Map<String, Object> stringObjectMap = reportDataList.get(0);
         int columnCount = stringObjectMap.size();
         int rowCount = 0;
-        int rowsPerPage = 20;
+        int rowsPerPage = 22;
         Map<String, Map<String, Map<String, Object>>> statistics = calculateStatistics(templateId, fromDateTime, toDate);
+        System.out.println("⏱ [6] Statistics calculated in " + (System.currentTimeMillis() - start) + " ms");
 
         PdfPTable table = new PdfPTable(columnCount);
         table.setWidthPercentage(100f);
         table.setSpacingBefore(5);
 
         addTableHeader(templateId, stringObjectMap, table);
-
         Map<String, double[]> parameterRanges = extractParameterRanges(templateId);
 
         for (Map<String, Object> map : reportDataList) {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 Object rawValue = entry.getValue();
                 String valueStr = (rawValue == null || rawValue.toString().trim().isEmpty() || "null".equalsIgnoreCase(rawValue.toString())) ? "null" : rawValue.toString();
-
                 if (entry.getKey().equalsIgnoreCase("timestamp")) {
                     try {
                         valueStr = convertMillisToDate(Long.parseLong(valueStr));
                     } catch (Exception ignored) {}
                 }
-
                 PdfPCell valueCell = new PdfPCell(new Phrase(valueStr));
                 valueCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-
                 try {
                     double value = Double.parseDouble(valueStr);
                     double[] range = parameterRanges.get(extractBaseParameter(entry.getKey()));
@@ -276,11 +285,9 @@ public class PdfService {
                         else if (value < from) valueCell.setBackgroundColor(CMYKColor.CYAN);
                     }
                 } catch (NumberFormatException ignored) {}
-
                 table.addCell(valueCell);
             }
             rowCount++;
-
             if (rowCount % rowsPerPage == 0) {
                 document.add(table);
                 document.newPage();
@@ -291,25 +298,12 @@ public class PdfService {
             }
         }
 
-        // Final page padding (if needed)
-//        int remainingRows = rowsPerPage - (rowCount % rowsPerPage);
-//        if (remainingRows != rowsPerPage) {
-//            int columns = stringObjectMap.size();
-//            for (int i = 0; i < remainingRows; i++) {
-//                for (int j = 0; j < columns; j++) {
-//                    PdfPCell emptyCell = new PdfPCell(new Phrase(" "));
-//                    emptyCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-//                    emptyCell.setFixedHeight(16f);
-//                    table.addCell(emptyCell);
-//                }
-//            }
-//        }
-
         if (rowCount % rowsPerPage != 0) {
             document.add(table);
             document.newPage();
         }
 
+        System.out.println("⏱ [7] Table rows added in " + (System.currentTimeMillis() - start) + " ms");
 
         PdfPTable statisticsTable = new PdfPTable(columnCount);
         statisticsTable.setWidthPercentage(100f);
@@ -323,6 +317,7 @@ public class PdfService {
         document.add(statisticsTable);
         addColorLegend(document);
         document.close();
+        System.out.println("⏱ [8] Document closed. Total time so far: " + (System.currentTimeMillis() - start) + " ms");
 
         String dynamicHeading = getDynamicReportHeading(templateId);
         String cleanHeading = dynamicHeading.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("_+", "_");
@@ -345,6 +340,8 @@ public class PdfService {
             ps.setBoolean(9, chk == 1);
             return ps;
         });
+
+        System.out.println("⏱ [9] PDF saved to DB in " + (System.currentTimeMillis() - start) + " ms");
     }
 
 
@@ -430,6 +427,7 @@ public class PdfService {
         }
         return "";
     }
+
     private String extractBaseParameter(String columnName) {
         return columnName.replaceAll("(_From_.*|_Unit_.*)$", "");
     }
@@ -509,20 +507,23 @@ public class PdfService {
 
         // Parameter headers with range only if explicitly set
         for (String parameter : template.getParameters()) {
-            String baseFormattedName = tableToHeaderMap.getOrDefault(parameter, parameter);
+            String baseKey = extractBaseParameter(parameter);
+            String headerLabel = tableToHeaderMap.getOrDefault(baseKey, baseKey); // HOT_SPOT_RH for example
+
             double fromValue = getFromValue(parameter);
             double toValue = getToValue(parameter);
 
-            String headerText = baseFormattedName;
+            String unit = extractUnit(parameter); // get % from _Unit_%
+            String formattedHeader = unit.isEmpty() ? headerLabel : headerLabel + "(" + unit + ")";
 
-            // Only add range if explicitly provided
             if (fromValue != Double.NEGATIVE_INFINITY && toValue != Double.POSITIVE_INFINITY) {
-                headerText += String.format("\nRange: %.0f - %.0f", fromValue, toValue);
+                formattedHeader += String.format("\nRange: %.0f - %.0f", fromValue, toValue);
             }
 
-            cell.setPhrase(new Phrase(headerText, font));
+            cell.setPhrase(new Phrase(formattedHeader, font));
             table.addCell(cell);
         }
+
 
         table.setHeaderRows(1);
     }
@@ -652,8 +653,9 @@ public class PdfService {
                 paragraph.setLeading(12f);
                 String roomInfo = pdfService.getRoomIdAndName(templateId);
                 paragraph.add(roomInfo + "\n");
-                paragraph.add("Sensor ID: Cold spot & Hot spot\n");
-                paragraph.add("Username: " + username + "\n");
+                String groupName = pdfService.getSubArea(templateId);
+                paragraph.add("Sensor ID : " + groupName + "\n");
+                paragraph.add("Username  : " + username + "\n");
                 paragraph.add("From: " + displayStartDate + " " + displayStartTime + " to " + displayEndDate + " " + displayEndTime + "\n");
 
                 infoCell.addElement(paragraph);

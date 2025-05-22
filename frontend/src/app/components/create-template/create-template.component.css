@@ -1,9 +1,10 @@
 .create-template-box {
-  margin-top: 6%;
+  margin-top: 10%;
   width: 89%;
-  margin-left: 10%;
+  margin-left: 8%;
   background-color: #36454F;
   border-radius: 5px;
+  height: 450px;
 }
 
 .heading {
@@ -53,7 +54,7 @@
 
 .options-item:focus,
 .options-item:active {
-  color: #0056b3;
+  /* color: #0056b3; */
   border-bottom: 2px solid #0056b3;
   outline: none;
 }
@@ -66,7 +67,7 @@
 }
 .goBack-btn{
   /* margin-top: 100px; */
-  margin-top: 70px;
+  margin-top: 110px;
   margin-left: 5%;
   margin-bottom: 3%;
   background-color: #36454F;
