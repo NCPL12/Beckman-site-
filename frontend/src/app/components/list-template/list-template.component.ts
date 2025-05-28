@@ -491,4 +491,3 @@ export class ListTemplateComponent implements OnInit {
     });
   }
 }
-

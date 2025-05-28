@@ -41,6 +41,9 @@ public class ReportsController {
 
     @Autowired
     private DateConverter dateConverter;
+    @Autowired
+    private GroupService groupService;
+
 
     // Edit Template (Includes `units`)
     @PutMapping("editTemplate/{id}")
@@ -68,21 +71,16 @@ public class ReportsController {
         reportTemplate.setReport_group((String) requestBody.get("report_group"));
         reportTemplate.setAdditionalInfo((String) requestBody.get("additionalInfo"));
 
-        // Convert Object to List<String>
+        reportTemplate.setRoomId((String) requestBody.get("roomId"));       // ✅ added
+        reportTemplate.setRoomName((String) requestBody.get("roomName"));   // ✅ added
+
         Object paramsObject = requestBody.get("parameters");
         List<String> parameters = (paramsObject instanceof List) ? (List<String>) paramsObject : List.of();
-
-//         Convert units to a simple string
-//        Object unitsObject = requestBody.get("units");
-//        String units = (unitsObject instanceof String) ? (String) unitsObject : "";
-
         reportTemplate.setParameters(parameters);
-//        reportTemplate.setUnits(units);
 
         ReportTemplate savedTemplate = templateService.saveTemplate(reportTemplate);
         return ResponseEntity.ok(savedTemplate);
     }
-
 
     // Find Templates by Name
     @GetMapping("findByName")
@@ -215,8 +213,24 @@ public class ReportsController {
             List<GroupDTO> groups = pdfService.getAllGroups();
             return ResponseEntity.ok(groups);
         } catch (Exception e) {
-            log.error("Error fetching groups", e);
+//            log.error("Error fetching groups", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @PostMapping("/add_group")
+    public ResponseEntity<String> createGroup(@RequestBody GroupDTO groupDTO) {
+        try {
+//            log.info("Received group: {}", groupDTO.getName());
+            groupService.saveGroup(groupDTO);
+            return ResponseEntity.ok("Group saved successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Error saving group", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to save group: " + e.getMessage());
+        }
+    }
+
+
+
 }

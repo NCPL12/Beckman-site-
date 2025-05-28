@@ -4,7 +4,7 @@
   margin-left: 8%;
   background-color: #36454F;
   border-radius: 5px;
-  height: 450px;
+  height: 500px;
 }
 
 .heading {
@@ -76,18 +76,19 @@
 }
 
 .dropdown-container {
-  position: relative;
+  position: relative; 
 }
 
 .dropdown-content {
   position: absolute;
   background-color: #353935;
   border: 1px solid #ddd;
-  width: 357px;
+  width: 467px;
   /* max-height: 135px; */
   max-height: 260px;
   overflow-y: auto;
   z-index: 1000;
+  right: 10px;
 }
 
 .dropdown-content div {
@@ -153,7 +154,7 @@
 }
 
 .popup-content {
-  background-color: white;
+  background-color: white; 
   padding: 20px;
   border-radius: 5px;
   width: 300px;
@@ -184,16 +185,91 @@
 .submit-btn:disabled {
   opacity: 0.5;      
   cursor: not-allowed; 
-  background-color: #ccc; 
+  /* background-color: #ccc;  */
   color: #666;     
 }
 .search-input{
-  width: 357px;
-  height: 20px;
+  width: 467px;
+  height: 30px;
   color: black;
-  padding-left: 6px; 
+  padding-left: 6px;
+  position: relative;
+  right: 10px; 
 }
 .search-input::placeholder {
   color: grey; 
   opacity: 1;
+}
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+
+.group-popup-content {
+  background-color: #36454F;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+.group-popup-content {
+  background-color: #36454F;
+  padding: 20px;
+  border-radius: 8px;
+  width: 320px;
+  color: white;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.group-popup-content h3 {
+  margin-bottom: 15px;
+}
+
+.group-popup-content input.options-item {
+  width: 90%;
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.group-popup-content .button-row {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.group-popup-content button {
+  padding: 6px 12px;
+  background-color: #2f4f4f;
+  color: white;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.group-popup-content button:hover {
+  background-color: #4f6f6f;
+}
+
+.group-popup-content .success-msg {
+  font-size: 12px;
+  color: limegreen;
+  margin-top: 10px;
+}
+.error-msg {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 5px;
 }

@@ -9,7 +9,8 @@
                 <select [(ngModel)]="selectedTemplate" class="options-item-dropdown" style="margin-top: 20px;">
                     <option [ngValue]="null" disabled>Select Template Name</option>
                     <option *ngFor="let report of reports" [ngValue]="report">
-                        {{ report.id + "    "+ report.name }}
+                        <!-- {{ report.id + "    "+ report.name }} -->
+                          {{report.name }}
                     </option>
                 </select>
             </div>

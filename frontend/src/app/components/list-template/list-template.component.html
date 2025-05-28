@@ -19,7 +19,7 @@
           </th>
           <th><div style="display: flex;">ID<img (click)="sortDataById()" class="sort-btn" src="../../../assets/images/arrow (1).png"></div> </th>
           <th><div style="display: flex;">Name<img (click)="sortByName()" class="sort-btn"  src="../../../assets/images/arrow (1).png"></div> </th>
-          <th><div style="display: flex;">Report Group<img (click)="sortByGroup()" class="sort-btn" style="margin-top: 9px;" src="../../../assets/images/arrow (1).png"></div> </th>
+          <th><div style="display: flex;">Sensor ID<img (click)="sortByGroup()" class="sort-btn" style="margin-top: 9px;" src="../../../assets/images/arrow (1).png"></div> </th>
           <th>Additional Info</th>
           <th>Parameters</th>
         </tr>
@@ -58,7 +58,7 @@
         </div>
 
         <div style="display: flex; flex-direction: column ;">
-          <label>Report Group: </label>
+          <label>Sensor ID : </label>
           <div class="dropdown-container" (click)="toggleGroupDropdown()">
 
             <div class="dropdown options-item-width">
@@ -66,12 +66,12 @@
             </div>
             <div class="dropdown-content" *ngIf="isGroupDropdownOpen" (click)="$event.stopPropagation()">
               <div *ngFor="let group of groupNameList">
-                <input type="radio" [value]="group" [(ngModel)]="selectedGroup" name="report_group"> {{ group }}
+                <input type="radio" [value]="group" [(ngModel)]="selectedGroup" class="input-sensor"  name="report_group"> {{ group }}
               </div>
             </div>
           </div>
         </div>
-        <div style="display: flex; flex-direction: column ;">
+        <!-- <div style="display: flex; flex-direction: column ;">
           <label>Additional Info: </label>
           <div class="dropdown-container" (click)="toggleDropdown('info')">
             <div class="dropdown options-item-width">
@@ -84,9 +84,9 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
-      <div style="display: flex; margin-top: 100px;">
+      <div style="display: flex; margin-top: 100px; position: absolute; ">
         <!-- Selected Parameters -->
         <div style="display: flex; flex-direction: column;">
           <label>Selected Parameters: </label>
@@ -129,8 +129,8 @@
         </div>
       
         <!-- Available Parameters -->
-        <div style="display: flex; flex-direction: column; margin-left: 27%;">
-          <label>Available Parameters: </label>
+        <div style="display: flex;  flex-direction: column;  margin-left: 37%;">
+          <label >Available Parameters: </label>
           <div class="dropdown-container">
             <div class="dropdown options-item-parameter">
               {{ unselectedParameters.length > 0 ? unselectedParameters.length + ' available' : 'No available parameters' }}
@@ -144,8 +144,10 @@
         </div>
       </div>
       
-      <button type="button" (click)="cancelEdit()" class="action-btn m-l btn">Cancel</button>
-      <button type="submit" class="action-btn m-l btn">Save</button>
+      <div class="button-style">
+              <button type="button" (click)="cancelEdit()" class="btn">Cancel</button>
+      <button type="submit" class="btn">Save</button>
+      </div>
     </form>
   </div>
 </div>

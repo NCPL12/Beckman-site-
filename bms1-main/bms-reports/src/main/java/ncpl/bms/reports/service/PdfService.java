@@ -58,32 +58,25 @@ public class PdfService {
 //        String sql = "SELECT report_group FROM report_template WHERE id = ?";
 //        return jdbcTemplate.queryForObject(sql, new Object[]{templateId}, String.class);
 //    }
-    public String getRoomIdAndName(Long templateId) {
-        ReportTemplate template = templateService.getById(templateId);
-        if (template == null || template.getParameters() == null || template.getParameters().isEmpty()) {
+public String getRoomIdAndName(Long templateId) {
+    String sql = "SELECT room_id, room_name FROM report_template WHERE id = ?";
+
+    try {
+        Map<String, Object> result = jdbcTemplate.queryForMap(sql, templateId);
+
+        if (result == null || result.isEmpty()) {
             return "Room ID & Name: N/A";
         }
 
-        List<String> parameters = template.getParameters();
+        String roomId = result.get("room_id") != null ? result.get("room_id").toString().trim() : "N/A";
+        String roomName = result.get("room_name") != null ? result.get("room_name").toString().trim() : "N/A";
 
-        // Step 1: Fetch all room mappings from DB
-        String sql = "SELECT TABLE_NAME, Room_ID, Room_Name FROM beckman_room_data";
-        List<Map<String, Object>> roomMappings = jdbcTemplate.queryForList(sql);
-
-        // Step 2: Match parameter column with TABLE_NAME in the mapping
-        for (String param : parameters) {
-            for (Map<String, Object> row : roomMappings) {
-                String tableName = String.valueOf(row.get("TABLE_NAME")).trim();
-                if (param.equalsIgnoreCase(tableName)) {
-                    String buildingId = String.valueOf(row.get("Room_ID")).trim();
-                    String buildingName = String.valueOf(row.get("Room_Name")).trim();
-                    return "Room ID & Name: " + buildingId + " & " + buildingName;
-                }
-            }
-        }
-
+        return "Room ID & Name: " + roomId + " & " + roomName;
+    } catch (Exception e) {
         return "Room ID & Name: N/A";
     }
+}
+
     public String getSubArea(Long templateId) {
         String sql = "SELECT report_group FROM report_template WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{templateId}, String.class);

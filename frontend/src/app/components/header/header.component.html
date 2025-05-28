@@ -5,7 +5,7 @@
     <div class="header-title">
         <div  class="header-name" >BMS Reporting Manager</div>
         <div *ngIf="isLoggedIn()" class="user-info" style="margin-right: 20px; display: flex;">
-            <div style=" margin-top: 3px;"><span>{{ username }} ({{ role }})</span></div>
+            <div style=" margin-top: 3px;"><span>{{ username }}</span></div>
             <div style="margin-left: 10px;">
                 <img class="logout-btn" src="/assets/images/power-off.png" (click)="confirmLogout()"
                     title="Logout">

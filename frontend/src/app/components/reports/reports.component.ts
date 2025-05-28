@@ -120,7 +120,7 @@ this.showPdfModal = true;
 
   confirmApprove(reportId: number) {
     const currentReport = this.reports.find(r => r.id === reportId);
-    const username = localStorage.getItem('username');
+    const username = localStorage.getItem('role');
 
     if (currentReport && currentReport.assignedApprover !== username) {
       alert('You are not assigned to approve this report.');

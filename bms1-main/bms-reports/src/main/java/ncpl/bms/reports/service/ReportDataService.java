@@ -58,7 +58,7 @@ public class ReportDataService {
         if (existingCount != null && existingCount > 0) {
             String deleteSql = "DELETE FROM report_data WHERE timestamp BETWEEN ? AND ?";
             jdbcTemplate.update(deleteSql, fromDate.getTime(), toDate.getTime());
-            log.info("Old report data deleted for given date range.");
+//            log.info("Old report data deleted for given date range.");
         }
         // STEP 2: Find table with maximum rows
         for (String tableName : tables) {
@@ -71,7 +71,7 @@ public class ReportDataService {
         }
 
         if (tableWithMaxRecords == null) {
-            log.warn("No records found in any table for the provided date range.");
+//            log.warn("No records found in any table for the provided date range.");
             return new ArrayList<>();
         }
 

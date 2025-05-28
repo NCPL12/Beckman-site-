@@ -20,20 +20,23 @@ public class ReportTemplate {
     private String name;
 
     @Column(columnDefinition = "VARBINARY(MAX)")
-    private byte[] parameters;  // Store as VARBINARY(MAX)
-
-//    @Column(columnDefinition = "VARCHAR(MAX)")
-//    private String units;  // Store as VARCHAR
+    private byte[] parameters;
 
     private String additionalInfo;
+
     private String report_group;
 
-    // **Serialize List<String> to byte[]**
+    // ✅ New fields
+    private String roomId;
+
+    private String roomName;
+
+    // Setter for List<String> -> byte[]
     public void setParameters(List<String> parameters) {
         this.parameters = serializeList(parameters);
     }
 
-    // **Deserialize byte[] to List<String>**
+    // Getter for byte[] -> List<String>
     public List<String> getParameters() {
         return deserializeList(this.parameters);
     }

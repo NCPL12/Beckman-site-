@@ -26,7 +26,7 @@ public class ReportTemplateService {
     }
 
     public ReportTemplate getById(Long id) {
-        log.info("Get template with id {} ", id);
+//        log.info("Get template with id {} ", id);
         return reportTemplateRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Template not found with id " + id));
     }
@@ -46,8 +46,12 @@ public class ReportTemplateService {
             template.setName(updatedTemplate.getName());
             template.setReport_group(updatedTemplate.getReport_group() != null ? updatedTemplate.getReport_group() : template.getReport_group());
             template.setParameters(updatedTemplate.getParameters());
-//            template.setUnits(updatedTemplate.getUnits()); // Added Units
             template.setAdditionalInfo(updatedTemplate.getAdditionalInfo());
+
+            // ✅ Add these lines
+            template.setRoomId(updatedTemplate.getRoomId());
+            template.setRoomName(updatedTemplate.getRoomName());
+
             return reportTemplateRepo.save(template);
         } else {
             throw new RuntimeException("Template not found with id " + id);

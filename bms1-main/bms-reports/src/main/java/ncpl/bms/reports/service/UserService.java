@@ -36,7 +36,7 @@ public class UserService {
 
     public UserDTO loginUser(String username, String password) {
         String hashedPassword = hashPassword(password);
-        log.info(hashedPassword);
+//        log.info(hashedPassword);
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
         List<UserDTO> users = jdbcTemplate.query(sql, new Object[]{username, hashedPassword}, new UserRowMapper());

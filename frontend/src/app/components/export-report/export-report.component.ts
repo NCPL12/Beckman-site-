@@ -362,7 +362,7 @@ public submit(): void {
   // }
 
 private exportReport(approverName: string | null): void {
-  const username = localStorage.getItem('username');
+  const username = localStorage.getItem('role');
   if (this.fromDate && this.toDate && username && this.selectedTemplate) {
     const formattedFromDate = this.formatDate(this.fromDate);
     const formattedToDate = this.formatDate(this.toDate);
