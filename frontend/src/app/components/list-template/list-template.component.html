@@ -20,7 +20,7 @@
           <th><div style="display: flex;">ID<img (click)="sortDataById()" class="sort-btn" src="../../../assets/images/arrow (1).png"></div> </th>
           <th><div style="display: flex;">Name<img (click)="sortByName()" class="sort-btn"  src="../../../assets/images/arrow (1).png"></div> </th>
           <th><div style="display: flex;">Sensor ID<img (click)="sortByGroup()" class="sort-btn" style="margin-top: 9px;" src="../../../assets/images/arrow (1).png"></div> </th>
-          <th>Additional Info</th>
+          <!-- <th>Additional Info</th> -->
           <th>Parameters</th>
         </tr>
       </thead>
@@ -30,7 +30,7 @@
           <td>{{ item.id }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.report_group }}</td>
-          <td>{{ item.additionalInfo }}</td>
+          <!-- <td>{{ item.additionalInfo }}</td> -->
           <td style="cursor: pointer; text-align: left;">
             <span (click)="toggleParameterDetails(i)" class="button">{{ getShortParameters(item.parameters) }}</span>
             <div *ngIf="isParameterDetailsVisible(i)" class="parameter-details">
