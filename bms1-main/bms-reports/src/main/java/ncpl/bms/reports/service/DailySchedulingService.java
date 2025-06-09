@@ -54,7 +54,7 @@ public class DailySchedulingService {
         String formattedFromDateTime = dateTimeFormatter.format(new Date(Long.parseLong(fromDateTime)));
         String formattedToDateTime = dateTimeFormatter.format(new Date(Long.parseLong(toDate)));
 
-        Map<String, Map<String, Integer>> statistics = reportDataService.calculateStatistics(templateId, fromDateTime, toDate);
+//        Map<String, Map<String, Integer>> statistics = reportDataService.calculateStatistics(templateId, fromDateTime, toDate);
         Document document = new Document(PageSize.A4.rotate());
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -107,9 +107,6 @@ public class DailySchedulingService {
         }
 
 
-        addStatisticsRow("Max", statistics, table);
-        addStatisticsRow("Min", statistics, table);
-        addStatisticsRow("Avg", statistics, table);
 
         document.add(table);
         document.close();

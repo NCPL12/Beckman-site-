@@ -102,7 +102,10 @@ public List<String> getTables() {
         // Create table statement
         sql.append("CREATE TABLE ").append(tableName).append(" (");
         sql.append("report_id INT NOT NULL IDENTITY(1,1), ");
-        sql.append("timestamp BIGINT");
+//        sql.append("timestamp BIGINT");
+        sql.append("timestamp datetime2");
+
+
 
         // Append column names to the SQL statement
         for (int i = 0; i < columnNames.size(); i++) {

@@ -1,4 +1,5 @@
 package ncpl.bms.reports.service;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.time.format.DateTimeFormatter;
@@ -179,7 +180,13 @@ public String getRoomIdAndName(Long templateId) {
 
                 try {
                     double val = Double.parseDouble(valObj.toString());
-                    long time = Long.parseLong(timeObj.toString());
+
+                    long time;
+                    if (timeObj instanceof Timestamp) {
+                        time = ((Timestamp) timeObj).getTime(); // ✅ proper timestamp conversion
+                    } else {
+                        time = Long.parseLong(timeObj.toString());
+                    }
 
                     if (val > maxVal) {
                         maxVal = val;
@@ -193,7 +200,7 @@ public String getRoomIdAndName(Long templateId) {
                     total += val;
                     count++;
                 } catch (Exception e) {
-                    // skip bad data
+                    log.warn("⛔ Error parsing value or timestamp for parameter '{}': {}", key, e.getMessage());
                 }
             }
 
@@ -210,7 +217,10 @@ public String getRoomIdAndName(Long templateId) {
                 minMap.put("timestamp", minTime);
 
                 avgMap.put("value", (int) (total / count));
+            } else {
+                log.warn("⚠️ No valid data found for parameter '{}'", key);
             }
+
             statMap.put("max", maxMap);
             statMap.put("min", minMap);
             statMap.put("avg", avgMap);
@@ -323,17 +333,16 @@ public String getRoomIdAndName(Long templateId) {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, pdfFileName);
-            ps.setString(2, fromDateTime);
-            ps.setString(3, toDate);
+            ps.setTimestamp(2, new Timestamp(Long.parseLong(fromDateTime))); // ✅ Fix
+            ps.setTimestamp(3, new Timestamp(Long.parseLong(toDate)));       // ✅ Fix
             ps.setBytes(4, byteArrayOutputStream.toByteArray());
             ps.setString(5, username);
-            ps.setString(6, currentDateStr);
+            ps.setString(6, currentDateStr); // this is okay since it's a string
             ps.setString(7, assignedTo);
             ps.setString(8, assigned_approver);
             ps.setBoolean(9, chk == 1);
             return ps;
         });
-
         System.out.println("⏱ [9] PDF saved to DB in " + (System.currentTimeMillis() - start) + " ms");
     }
 
@@ -484,9 +493,9 @@ public String getRoomIdAndName(Long templateId) {
     }
 
     private void addTableHeader(Long templateId, Map<String, Object> stringObjectMap, PdfPTable table) {
-        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, CMYKColor.BLACK);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.WHITE); // White header text
         PdfPCell cell = new PdfPCell();
-        cell.setBackgroundColor(CMYKColor.GRAY);
+        cell.setBackgroundColor(new Color(0, 123, 128)); // exact teal color from image
         cell.setPadding(5);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 

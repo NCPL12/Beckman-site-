@@ -53,7 +53,7 @@ public class WeeklySchedulingService {
         String formattedFromDateTime = dateTimeFormatter.format(new Date(Long.parseLong(fromDateTime)));
         String formattedToDateTime = dateTimeFormatter.format(new Date(Long.parseLong(toDate)));
 
-        Map<String, Map<String, Integer>> statistics = reportDataService.calculateStatistics(templateId, fromDateTime, toDate);
+//        Map<String, Map<String, Integer>> statistics = reportDataService.calculateStatistics(templateId, fromDateTime, toDate);
         Document document = new Document(PageSize.A4.rotate());
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -104,9 +104,9 @@ public class WeeklySchedulingService {
                 table.addCell(valueCell);
             }
         }
-        addStatisticsRow("Max", statistics, table);
-        addStatisticsRow("Min", statistics, table);
-        addStatisticsRow("Avg", statistics, table);
+//        addStatisticsRow("Max", statistics, table);
+//        addStatisticsRow("Min", statistics, table);
+//        addStatisticsRow("Avg", statistics, table);
         document.add(table);
         document.close();
         // Create the PDF file name in the same format as before
