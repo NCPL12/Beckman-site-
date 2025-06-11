@@ -495,7 +495,7 @@ public String getRoomIdAndName(Long templateId) {
     private void addTableHeader(Long templateId, Map<String, Object> stringObjectMap, PdfPTable table) {
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.WHITE); // White header text
         PdfPCell cell = new PdfPCell();
-        cell.setBackgroundColor(new Color(0, 123, 128)); // exact teal color from image
+        cell.setBackgroundColor(new Color(0, 123, 128));
         cell.setPadding(5);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 

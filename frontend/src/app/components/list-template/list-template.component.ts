@@ -90,17 +90,20 @@ export class ListTemplateComponent implements OnInit {
   }
 
 
-  getParametersList(): void {
-    this.http.get<string[]>(`${this.apiBaseUrl}/parameters`, { responseType: 'json' }).subscribe(
-      (response: string[]) => {
-        this.parameters = response;
-        this.updateUnselectedParameters();
-      },
-      (error) => {
-        console.error('Error fetching parameters', error);
-      }
-    );
-  }
+getParametersList(): void {
+  this.http.get<string[]>(`${this.apiBaseUrl}/parameters`, { responseType: 'json' }).subscribe(
+    (response: string[]) => {
+      // Remove EMS_NEW_ prefix from all available parameters
+      this.parameters = response.map(param =>
+        param.startsWith("EMS_NEW_") ? param.replace("EMS_NEW_", "") : param
+      );
+      this.updateUnselectedParameters();
+    },
+    (error) => {
+      console.error('Error fetching parameters', error);
+    }
+  );
+}
 
 
   updateUnselectedParameters(): void {

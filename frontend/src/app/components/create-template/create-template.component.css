@@ -273,3 +273,10 @@
   font-size: 0.8rem;
   margin-top: 5px;
 }
+
+
+/* Fix: Set popup z-index higher than dropdown */
+.confirmation-popup,
+.popup-overlay {
+  z-index: 2000; /* or higher than dropdown's 1000 */
+}

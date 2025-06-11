@@ -97,39 +97,46 @@
             <div class="dropdown-content-parameter">
               <div *ngFor="let param of selectedParameters; let i = index">
                 <input type="checkbox" [value]="param.baseName" [checked]="true" (change)="onParameterChange($event)">
-                <span>{{ param.baseName }}</span>
-                <!-- <div class="range-inputs">
+              <span>{{ param.baseName.replace('EMS_NEW_', '') }}</span>
+
+              <div class="range-inputs">
                   <span>Select Range: </span>
+             <div style="width: 230px; display: flex; align-items: center; justify-content: space-between;padding: 3px; margin-right: 10px ;">
                   <input type="number" 
-                         [(ngModel)]="param.range.min" 
-                         min="-200" 
-                         max="500" 
-                         placeholder="From"
-                         [ngModelOptions]="{standalone: true}"
-                         [style.border-color]="!validateRange(param) ? 'red' : ''">
+       [(ngModel)]="param.range.min" 
+       min="-200" 
+       max="500" 
+       placeholder="From"
+       [ngModelOptions]="{standalone: true}"
+       style="color: black; padding: 2px 6px;"
+       [style.border-color]="!validateRange(param) ? 'red' : ''">
+
+              
                   <input type="number" 
                          [(ngModel)]="param.range.max" 
                          min="-200" 
                          max="500" 
                          placeholder="To"
+       style="color: black;  padding: 2px 6px"
                          [ngModelOptions]="{standalone: true}"
                          [style.border-color]="!validateRange(param) ? 'red' : ''">
+             </div>
                   <div *ngIf="!validateRange(param)" style="color: red; font-size: 12px;">
                     Start range must be less than end range
                   </div>
-                  <div>
+                  <!-- <div>
                     <label>Units:</label>
                     <input type="text" [(ngModel)]="param.range.unit" placeholder="e.g. kWh"
                       [ngModelOptions]="{standalone: true}">
-                  </div>
-                </div> -->
+                  </div> -->
+                </div>
               </div>
             </div>
           </div>
         </div>
       
         <!-- Available Parameters -->
-        <div style="display: flex;  flex-direction: column;  margin-left: 37%;">
+        <div style="display: flex;  flex-direction: column;  margin-left: 17%;">
           <label >Available Parameters: </label>
           <div class="dropdown-container">
             <div class="dropdown options-item-parameter">

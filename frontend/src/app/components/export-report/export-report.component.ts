@@ -433,20 +433,30 @@ private exportReport(approverName: string | null): void {
     this.http.post(`${this.apiBaseUrl}/log-generated-report`, logPayload).subscribe(() => {
       const url = `${this.apiBaseUrl}/exportReport?id=${this.selectedTemplate.id}&fromDate=${formattedFromDate}&toDate=${formattedToDate}&username=${username}&assignedTo=${this.assignedTo || ''}&assigned_approver=${approverName || ''}`;
 
-      this.http.get(url, { responseType: 'blob' }).subscribe(blob => {
-        const blobUrl = URL.createObjectURL(blob);
+this.http.get(url, { responseType: 'blob' }).subscribe(blob => {
+  if (blob.size === 0) {
+    if (newTab) {
+      newTab.document.body.innerHTML = `
+        <p style="color: red; font-size: 16px; text-align: center; padding: 50px;">
+          ❌ No data found for the selected date range.<br>Please adjust your filters and try again.
+        </p>
+      `;
+    }
+    return;
+  }
 
-        if (newTab) {
-          // ✅ Use iframe with onload event to ensure PDF is rendered before closing
-          newTab.document.body.innerHTML = `
-            <iframe id="pdfFrame" src="${blobUrl}" style="width:100vw;height:100vh;border:none;" onload="setTimeout(() => window.close(), 5000)"></iframe>
-          `;
-        }
-      }, error => {
-        if (newTab) {
-          newTab.document.body.innerHTML = '<p style="color: red;">❌ Failed to generate PDF. Please try again.</p>';
-        }
-      });
+  const blobUrl = URL.createObjectURL(blob);
+  if (newTab) {
+    newTab.document.body.innerHTML = `
+      <iframe id="pdfFrame" src="${blobUrl}" style="width:100vw;height:100vh;border:none;" onload="setTimeout(() => window.close(), 3000)"></iframe>
+    `;
+  }
+}, error => {
+  if (newTab) {
+    newTab.document.body.innerHTML = '<p style="color: red;">❌ Failed to generate PDF. Please try again.</p>';
+  }
+});
+
 
     }, error => {
       alert('Failed to log report generation');
