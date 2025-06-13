@@ -1,8 +1,10 @@
 package ncpl.bms.reports.service;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.jdbc.core.JdbcTemplate;
+import com.lowagie.text.pdf.PdfPageEventHelper;
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfContentByte;
+import org.springframework.core.io.ClassPathResource;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
@@ -175,31 +182,80 @@ public class AuditReportService {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
-            PdfWriter.getInstance(document, out);
+            PdfWriter writer = PdfWriter.getInstance(document, out);
+            writer.setPageEvent(new AuditFooterEvent());
             document.open();
+// === Header Section (Title + Logo) ===
+            PdfPTable headerTop = new PdfPTable(2);
+            headerTop.setWidthPercentage(100);
+            headerTop.setWidths(new float[]{80f, 20f}); // 80% title + 20% logo
 
-            String title = "Audit Report from " + fromDateStr + " to " + toDateStr;
-            document.add(new Paragraph(title));
-            document.add(new Paragraph(" ")); // Add some space between title and table
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+            Font dateFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
 
-            // Convert fromDate and toDate from String to milliseconds
-            long fromDateMillis = convertToMillis(fromDateStr);
-            long toDateMillis = convertToMillis(toDateStr);
+// Title cell (left)
+            PdfPCell titleCell = new PdfPCell(new Phrase("Audit Report", titleFont));
+            titleCell.setBorder(Rectangle.NO_BORDER);
+            titleCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            headerTop.addCell(titleCell);
 
-            // SQL query with date range filter
-            String sql = "SELECT * FROM audit_report WHERE timestamp BETWEEN ? AND ?";
-            List<Map<String, Object>> auditLogs = jdbcTemplate.queryForList(sql, fromDateMillis, toDateMillis);
+// Logo cell (right)
+            PdfPCell logoCell = new PdfPCell();
+            logoCell.setBorder(Rectangle.NO_BORDER);
+            logoCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            try {
+                Image logo = Image.getInstance(new ClassPathResource("static/images/logo1.png").getURL());
+                logo.scaleToFit(80, 50);
+                logo.setAlignment(Image.ALIGN_RIGHT);
+                logoCell.addElement(logo);
+            } catch (Exception e) {
+                logoCell.addElement(new Phrase("Logo"));
+            }
+            headerTop.addCell(logoCell);
 
-            // Add table to PDF
+            document.add(headerTop);
+
+// === Date Line (Centered) ===
+            PdfPTable dateTable = new PdfPTable(1);
+            dateTable.setWidthPercentage(100);
+
+            String dateText = "From " + fromDateStr + " To " + toDateStr;
+            PdfPCell dateCell = new PdfPCell(new Phrase(dateText, dateFont));
+            dateCell.setBorder(Rectangle.NO_BORDER);
+            dateCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            dateCell.setPaddingBottom(10f); // add some space before table
+
+            dateTable.addCell(dateCell);
+            document.add(dateTable);
+
+            // === Spacer ===
+            document.add(new Paragraph(" ")); // One line of spacing
+
+            // === Table with audit data ===
             PdfPTable table = new PdfPTable(3);
-            table.addCell("Timestamp");
-            table.addCell("Username");
-            table.addCell("Action");
+            table.setWidthPercentage(100f);
+            table.setSpacingBefore(10f);
+            table.setWidths(new float[]{30f, 35f, 35f});
 
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.WHITE);
+            PdfPCell headerCell = new PdfPCell();
+            headerCell.setBackgroundColor(new Color(0, 123, 128));
+            headerCell.setPadding(5);
+            headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            headerCell.setPhrase(new Phrase("Timestamp", headerFont)); table.addCell(headerCell);
+            headerCell.setPhrase(new Phrase("Username", headerFont));  table.addCell(headerCell);
+            headerCell.setPhrase(new Phrase("Activity", headerFont));    table.addCell(headerCell);
+
+            Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+            long fromMillis = convertToMillis(fromDateStr);
+            long toMillis = convertToMillis(toDateStr);
+            String sql = "SELECT * FROM audit_report WHERE timestamp BETWEEN ? AND ? ORDER BY timestamp DESC";
+            List<Map<String, Object>> auditLogs = jdbcTemplate.queryForList(sql, fromMillis, toMillis);
+
             for (Map<String, Object> log : auditLogs) {
-                // Directly retrieve the timestamp as Long
                 Long timestampMillis = (Long) log.get("timestamp");
                 LocalDateTime dateTime = LocalDateTime.ofInstant(
                         new java.util.Date(timestampMillis).toInstant(),
@@ -207,19 +263,74 @@ public class AuditReportService {
                 );
                 String formattedDate = dateTime.format(formatter);
 
-                table.addCell(formattedDate);
-                table.addCell((String) log.get("username"));
-                table.addCell((String) log.get("action"));
+                PdfPCell cell1 = new PdfPCell(new Phrase(formattedDate, cellFont));
+                PdfPCell cell2 = new PdfPCell(new Phrase((String) log.get("username"), cellFont));
+                PdfPCell cell3 = new PdfPCell(new Phrase((String) log.get("action"), cellFont));
+
+                for (PdfPCell cell : List.of(cell1, cell2, cell3)) {
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setPadding(5f);
+                    table.addCell(cell);
+                }
             }
 
             document.add(table);
             document.close();
 
-        } catch (DocumentException e) {
-            logger.error("Error generating audit report PDF", e);
+        } catch (Exception e) {
+            log.error("❌ Error generating audit report PDF", e);
         }
+
         return new ByteArrayInputStream(out.toByteArray());
     }
+
+    private static class AuditFooterEvent extends PdfPageEventHelper {
+        private PdfTemplate totalPageTemplate;
+        private BaseFont baseFont;
+
+        @Override
+        public void onOpenDocument(PdfWriter writer, Document document) {
+            totalPageTemplate = writer.getDirectContent().createTemplate(50, 50);
+            try {
+                baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void onCloseDocument(PdfWriter writer, Document document) {
+            totalPageTemplate.beginText();
+            totalPageTemplate.setFontAndSize(baseFont, 10);
+            totalPageTemplate.setTextMatrix(0, 0);
+            totalPageTemplate.showText(String.valueOf(writer.getPageNumber() - 1));
+            totalPageTemplate.endText();
+        }
+
+        @Override
+        public void onEndPage(PdfWriter writer, Document document) {
+            PdfContentByte cb = writer.getDirectContent();
+            cb.beginText();
+            cb.setFontAndSize(baseFont, 10);
+
+            String nowStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yy HH:mm"));
+            int pageNumber = writer.getPageNumber();
+
+            cb.setTextMatrix(document.right() - 120, document.bottom() - 10 + 20);
+//            cb.showText("Printed On: " + nowStr);
+
+//            String pageText = "Page No: " + pageNumber + " of ";
+            cb.setTextMatrix(document.right() - 120, document.bottom() - 10 - 4);
+//            cb.showText(pageText);
+
+            cb.endText();
+//            cb.addTemplate(totalPageTemplate, document.right() - 120 + baseFont.getWidthPoint(pageText, 10), document.bottom() - 14);
+        }
+    }
+
+
+
     private long convertToMillis(String dateStr) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -229,5 +340,13 @@ public class AuditReportService {
             logger.error("Error parsing date", e);
             return 0; // Handle error appropriately
         }
+    }
+
+    public void logAlarmReportGeneration(String username) {
+        long currentTimeMillis = System.currentTimeMillis();
+        String action = "generated-alarm-report";
+
+        String sql = "INSERT INTO audit_report (timestamp, username, action) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, String.valueOf(currentTimeMillis), username, action);
     }
 }

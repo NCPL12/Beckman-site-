@@ -20,7 +20,7 @@ export const routes: Routes = [
   { path: 'export', component: ExportReportComponent, canActivate: [AuthGuard]  },
   { path: 'reports', component: ReportsComponent, canActivate: [AuthGuard]  },
   // { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]  },
-  { path: 'log-report', component: LogReportComponent, canActivate: [AuthGuard]  },
+  // { path: 'log-report', component: LogReportComponent, canActivate: [AuthGuard]  },
   { path: 'audit-report', component: AuditReportComponent, canActivate: [AuthGuard]  },
   { path: 'alarm-report', component: AlarmReportComponent, canActivate: [AuthGuard]  },
   { path: 'about', component: AboutComponent, canActivate: [AuthGuard]  },

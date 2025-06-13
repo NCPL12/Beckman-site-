@@ -41,11 +41,11 @@
 			<artifactId>mssql-jdbc</artifactId>
 			<version>7.4.1.jre8</version> <!-- or the latest version -->
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.28</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -113,5 +113,11 @@
 			</plugin>
 		</plugins>
 	</build>-->
+	<distributionManagement>
+		<repository>
+			<id>local-repo</id>
+			<url>file://${project.basedir}/local-maven-repo</url>
+		</repository>
+	</distributionManagement>
 
 </project>

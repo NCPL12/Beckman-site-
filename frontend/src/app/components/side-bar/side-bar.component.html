@@ -16,10 +16,10 @@
              [ngClass]="{'active-route': isActiveRoute('dashboard')}">
             <img src="../../../assets/images/graph2-circle.png" class="nav-item-img" title="Dashboard">
         </div> -->
-        <div *ngIf="userRole === 'admin'" class="nav-item" (click)="navigateTo('log-report')" 
+        <!-- <div *ngIf="userRole === 'admin'" class="nav-item" (click)="navigateTo('log-report')" 
              [ngClass]="{'active-route': isActiveRoute('log-report')}">
             <img src="../../../assets/images/log-circle.png" class="nav-item-img" title="Log Report">
-        </div>
+        </div> -->
         <div *ngIf="userRole === 'admin'" class="nav-item" (click)="navigateTo('audit-report')" 
              [ngClass]="{'active-route': isActiveRoute('audit-report')}">
             <img src="../../../assets/images/log.png" class="nav-item-img" title="Audit Report">

@@ -31,6 +31,8 @@ public class AlarmReportService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private AuditReportService auditReportService;
 
     public List<AlarmRecordDTO> fetchAlarmLogs(long startMillis, long endMillis) {
         String sql = "SELECT " +
@@ -240,10 +242,10 @@ public class AlarmReportService {
     public byte[] generateAlarmReportPdf(long startMillis, long endMillis, String username) {
         List<AlarmRecordDTO> logs = fetchAlarmLogs(startMillis, endMillis);
 
-        // ✅ Add this validation
         if (logs == null || logs.isEmpty()) {
             throw new RuntimeException("No alarm records found in the selected time range.");
         }
+
 
         System.out.println("Generating alarm report for user: " + username);
 
@@ -374,6 +376,7 @@ public class AlarmReportService {
             document.add(footerTable);
 
             document.close();
+            auditReportService.logAlarmReportGeneration(username);
             return out.toByteArray();
 
         } catch (Exception e) {
@@ -381,4 +384,5 @@ public class AlarmReportService {
             return null;
         }
     }
+
 }

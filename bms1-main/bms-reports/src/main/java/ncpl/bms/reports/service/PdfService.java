@@ -128,35 +128,35 @@ public String getRoomIdAndName(Long templateId) {
         return map;
     }
 
-    private void addColorLegend(Document document) throws DocumentException {
-        PdfPTable legendTable = new PdfPTable(2);
-        legendTable.setWidthPercentage(30f);
-        legendTable.setSpacingBefore(10);
-        legendTable.setHorizontalAlignment(Element.ALIGN_LEFT);
-        legendTable.setWidths(new int[]{1, 4}); // 1 part color box, 4 part text
+//    private void addColorLegend(Document document) throws DocumentException {
+//        PdfPTable legendTable = new PdfPTable(2);
+//        legendTable.setWidthPercentage(30f);
+//        legendTable.setSpacingBefore(10);
+//        legendTable.setHorizontalAlignment(Element.ALIGN_LEFT);
+//        legendTable.setWidths(new int[]{1, 4}); // 1 part color box, 4 part text
+//
+//        Font labelFont = FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL);
+//
+//        addLegendItem(legendTable, Color.RED, "Above Range");
+//        addLegendItem(legendTable, Color.white, "Within Range");
+//        addLegendItem(legendTable, Color.CYAN, "Below Range");
+//        // Light green for OK
+//
+//        document.add(legendTable);
+//    }
 
-        Font labelFont = FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL);
-
-        addLegendItem(legendTable, Color.RED, "Above Range");
-        addLegendItem(legendTable, Color.white, "Within Range");
-        addLegendItem(legendTable, Color.CYAN, "Below Range");
-        // Light green for OK
-
-        document.add(legendTable);
-    }
-
-    private void addLegendItem(PdfPTable table, Color color, String label) {
-        PdfPCell colorCell = new PdfPCell();
-        colorCell.setBackgroundColor(color);
-        colorCell.setFixedHeight(10f); // Small box
-        colorCell.setBorder(Rectangle.NO_BORDER);
-        table.addCell(colorCell);
-
-        PdfPCell labelCell = new PdfPCell(new Phrase(label, FontFactory.getFont(FontFactory.HELVETICA, 9)));
-        labelCell.setBorder(Rectangle.NO_BORDER);
-        labelCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        table.addCell(labelCell);
-    }
+//    private void addLegendItem(PdfPTable table, Color color, String label) {
+//        PdfPCell colorCell = new PdfPCell();
+//        colorCell.setBackgroundColor(color);
+//        colorCell.setFixedHeight(10f); // Small box
+//        colorCell.setBorder(Rectangle.NO_BORDER);
+//        table.addCell(colorCell);
+//
+//        PdfPCell labelCell = new PdfPCell(new Phrase(label, FontFactory.getFont(FontFactory.HELVETICA, 9)));
+//        labelCell.setBorder(Rectangle.NO_BORDER);
+//        labelCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//        table.addCell(labelCell);
+//    }
 
     public Map<String, Map<String, Map<String, Object>>> calculateStatistics(Long templateId, String fromDate, String toDate) {
         List<Map<String, Object>> data = reportDataService.generateReportData(templateId, fromDate, toDate);
@@ -284,8 +284,8 @@ public String getRoomIdAndName(Long templateId) {
                     double[] range = parameterRanges.get(extractBaseParameter(entry.getKey()));
                     if (range != null) {
                         double from = range[0], to = range[1];
-                        if (value > to) valueCell.setBackgroundColor(CMYKColor.RED);
-                        else if (value < from) valueCell.setBackgroundColor(CMYKColor.CYAN);
+//                        if (value > to) valueCell.setBackgroundColor(CMYKColor.RED);
+//                        else if (value < from) valueCell.setBackgroundColor(CMYKColor.CYAN);
                     }
                 } catch (NumberFormatException ignored) {}
                 table.addCell(valueCell);
@@ -318,7 +318,7 @@ public String getRoomIdAndName(Long templateId) {
         addStatisticsRow("Avg", statistics, statisticsTable);
 
         document.add(statisticsTable);
-        addColorLegend(document);
+//        addColorLegend(document);
         document.close();
         System.out.println("⏱ [8] Document closed. Total time so far: " + (System.currentTimeMillis() - start) + " ms");
 
