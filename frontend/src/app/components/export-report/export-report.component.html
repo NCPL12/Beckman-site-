@@ -46,35 +46,66 @@
                 Schedule Export
             </label>
         </div> -->
-        <div *ngIf="exportType === 'manual'">
-            <div class="date-div">
-              <div>
-                <input placeholder="From Date" class="textbox-n" type="text"
-                       onfocus="(this.type='datetime-local')" onblur="(this.type='text')"
-                       [(ngModel)]="fromDate" id="fromDate" class="options-item"
-                       max="9999-12-31T23:59" />
-              </div>
-              <div style="margin-top: 20px;">
-                <input placeholder="To Date" class="textbox-n" type="text"
-                       onfocus="(this.type='datetime-local')" onblur="(this.type='text')"
-                       [(ngModel)]="toDate" id="toDate" class="options-item"
-                       max="9999-12-31T23:59" />
-              </div>
-              <div *ngIf="dateError" class="error-msg" style="font-size: 14px; color: red; display: flex; align-items: center; justify-content: center;">
-                {{ dateError }}
-              </div>
-              <!-- <div class="or-vid">OR</div>
-              
-              <div class="dropdown-container">
-                <select [(ngModel)]="predefinedReport" (change)="onPredefinedReportChange()" class="options-item-dropdown">
-                  <option value="" disabled selected>Select Predefined Report</option>
-                  <option value="yesterday">Yesterday Report</option>
-                  <option value="oneWeek">One Week Report</option>
-                  <option value="oneMonth">One Month Report</option>
-                </select>
-              </div> -->
-            </div>
-          </div>          
+  <!-- <div *ngIf="exportType === 'manual'">
+  <div class="date-div">
+
+    <div>
+      <label for="fromDate" style="font-weight: 300; margin-bottom: 5px; display: block; color: white;">From Date</label>
+      <input
+        type="datetime-local"
+        [(ngModel)]="fromDate"
+        id="fromDate"
+        class="options-item"
+        [max]="'9999-12-31T23:59'"
+      />
+    </div>
+
+    <div style="margin-top: 20px;">
+      <label for="toDate" style="font-weight:300; margin-bottom: 5px; display: block; color: white;">To Date</label>
+      <input
+        type="datetime-local"
+        [(ngModel)]="toDate"
+        id="toDate"
+        class="textbox-n options-item"
+        [max]="'9999-12-31T23:59'"
+      />
+    </div>
+
+    <div *ngIf="dateError" class="error-msg" style="font-size: 14px; color: red; display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+      {{ dateError }}
+    </div>
+
+  </div>
+</div>
+         -->
+
+         <div class="date-div">
+
+  <div>
+    <label for="fromDate" style="font-weight: 300; margin-bottom: 5px; display: block; color: white;">From Date</label>
+    <input
+      type="datetime-local"
+      [(ngModel)]="fromDate"
+      id="fromDate"
+      [max]="'9999-12-31T23:59'"
+    />
+  </div>
+
+  <div style="margin-top: 20px;">
+    <label for="toDate" style="font-weight:300; margin-bottom: 5px; display: block; color: white;">To Date</label>
+    <input
+      type="datetime-local"
+      [(ngModel)]="toDate"
+      id="toDate"
+      [max]="'9999-12-31T23:59'"
+    />
+  </div>
+
+  <div *ngIf="dateError" class="error-msg" style="font-size: 14px; color: red; display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+    {{ dateError }}
+  </div>
+
+</div>
 
         <div *ngIf="exportType === 'schedule'">
 

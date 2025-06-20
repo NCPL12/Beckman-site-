@@ -1,30 +1,32 @@
 <div class="log-container">
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-    <div class="heading">Alarm Report</div>
+    <div class="heading" style=" display: flex; align-items: center;">Alarm Report</div>
     <div class="download-section" style="display: flex; align-items: center;">
-      <div class="download-section">
-        <div>
-          <input
-            placeholder="From Date"
-            class="textbox-n options-item"
-            type="text"
-            onfocus="(this.type='datetime-local')"
-            onblur="(this.type='text')"
-            [(ngModel)]="fromDate"
-            id="fromDate"
-          />
-        </div>
-        <div>
-          <input
-            placeholder="To Date"
-            class="textbox-n options-item"
-            type="text"
-            onfocus="(this.type='datetime-local')"
-            onblur="(this.type='text')"
-            [(ngModel)]="toDate"
-            id="toDate"
-          />
-        </div>
+      <div class="download-section" style=" display: flex; align-items: center;">
+        <div style="padding: 5px;">
+                <!-- <input style="margin-right: 15px;"
+                  placeholder="From Date" class="textbox-n"
+                   type="text" [(ngModel)]="fromDate
+                   " id="fromDate" class="options-item" /> -->
+                       <label for="fromDate" style="font-weight: 300; padding: 10px; margin-bottom: 5px; display: block; color: white;">From Date</label>
+                   <input
+      type="datetime-local"
+      [(ngModel)]="fromDate"
+      id="fromDate"
+      [max]="'9999-12-31T23:59'"
+    />
+            </div>
+            <div style=" padding: 5px">
+                 <label for="toDate" style="font-weight:300; margin-bottom: 5px;  padding: 10px; display:  block; color: white;">To Date</label>
+                <!-- <input style="margin-right: 15px;" placeholder="To Date" class="textbox-n" type="text" onfocus="(this.type='datetime-local')"
+                    onblur="(this.type='text')" [(ngModel)]="toDate" id="toDate" class="options-item" /> -->
+                       <input
+      type="datetime-local"
+      [(ngModel)]="toDate"
+      id="toDate"
+      [max]="'9999-12-31T23:59'"
+    />
+            </div>
         <div>
           <button
             (click)="downloadAlarmReport()"

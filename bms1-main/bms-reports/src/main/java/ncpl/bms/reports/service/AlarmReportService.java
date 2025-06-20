@@ -261,7 +261,7 @@ public class AlarmReportService {
 
                 {
                     try {
-                        logo = Image.getInstance(new ClassPathResource("static/images/logo1.png").getFile().getAbsolutePath());
+                        logo = Image.getInstance(new ClassPathResource("static/images/logo1.png").getInputStream().readAllBytes());
                         logo.scaleToFit(90, 40);
                     } catch (IOException e) {
                         log.error("Logo load error", e);

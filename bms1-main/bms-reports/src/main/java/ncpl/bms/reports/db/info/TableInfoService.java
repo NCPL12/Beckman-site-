@@ -50,14 +50,13 @@ public class TableInfoService implements CommandLineRunner {
 //        return tableName;
 //    }
 public List<String> getTables() {
-    //log.info("Getting tables inside TableInfoService");
     List<String> tablesList = tableInfoRepository.findAllTableNames();
 
-    // Remove suffixes starting with '_From' from table names
     List<String> cleanedTablesList = tablesList.stream()
             .filter(t -> t.startsWith(tablePrefix))
             .map(this::removeSuffix)
-            .sorted() // Ensure the list is sorted
+            .filter(t -> !t.equalsIgnoreCase("EMS_NEW_AUDITHISTORY"))  // <-- Ignored here
+            .sorted()
             .collect(Collectors.toList());
 
     return cleanedTablesList;

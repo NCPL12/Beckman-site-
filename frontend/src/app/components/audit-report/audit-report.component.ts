@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
@@ -46,7 +46,7 @@ export class AuditReportComponent implements OnInit {
       return null;
     }
 
-    return this.datePipe.transform(new Date(timestamp), 'yyyy-MM-dd HH:mm:ss');
+    return this.datePipe.transform(new Date(timestamp), 'dd-MM-yyyy HH:mm:ss');
   }
 
 
@@ -79,4 +79,8 @@ export class AuditReportComponent implements OnInit {
   isValidDateRange(): boolean {
     return this.fromDate !== '' && this.toDate !== '';
   }
+   formatDateString(dateStr: string): string {
+      if (!dateStr) return '';
+      return formatDate(dateStr, 'dd-MM-yyyy HH:mm', 'en-IN');
+    }
 }

@@ -1,0 +1,78 @@
+<div class="log-container">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    <div class="heading" style=" display: flex; align-items: center;">Beckman Audit Report</div>
+    <div class="download-section" style="display: flex; gap: 15px; align-items: center;">
+      <div class="download-section"  style=" display: flex; align-items: center;">
+            <div style="padding: 5px;">
+                <!-- <input style="margin-right: 15px;"
+                  placeholder="From Date" class="textbox-n"
+                   type="text" [(ngModel)]="fromDate
+                   " id="fromDate" class="options-item" /> -->
+                       <label for="fromDate" style="font-weight: 300; padding: 10px; margin-bottom: 5px; display: block; color: white;">From Date</label>
+                   <input
+      type="datetime-local"
+      [(ngModel)]="fromDate"
+      id="fromDate"
+      [max]="'9999-12-31T23:59'"
+    />
+            </div>
+            <div style=" padding: 5px">
+                 <label for="toDate" style="font-weight:300; margin-bottom: 5px;  padding: 10px; display:  block; color: white;">To Date</label>
+                <!-- <input style="margin-right: 15px;" placeholder="To Date" class="textbox-n" type="text" onfocus="(this.type='datetime-local')"
+                    onblur="(this.type='text')" [(ngModel)]="toDate" id="toDate" class="options-item" /> -->
+                       <input
+      type="datetime-local"
+      [(ngModel)]="toDate"
+      id="toDate"
+      [max]="'9999-12-31T23:59'"
+    />
+            </div>
+        <div>
+          <button (click)="downloadAuditReport()" class="download-btn" [disabled]="!isValidDateRange()">
+            Download PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message" style="color: red; margin-top: 10px; text-align: center;">
+    {{ errorMessage }}
+  </div>
+
+  <!-- 🌟 Add Table Here for Stored Reports -->
+  <div style="margin-top: 20px; overflow-y: auto; height: 350px;">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Report Name</th>
+          <th>Generated On</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let report of storedReports">
+          <td>{{ report.id }}</td>
+          <td>{{ report.reportName }}</td>
+          <td>{{ report.generatedOn | date: 'dd-MMM-yyyy HH:mm' }}</td>
+          <td>
+            <img (click)="viewReport(report.id)" class="btn-img" src="../../../assets/images/view.png" title="View">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- PDF Modal Viewer -->
+<div *ngIf="showPdfModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <button class="close-btn" (click)="closePdf()">Close</button>
+
+
+    </div>
+
+    <iframe [src]="pdfUrl" width="100%" height="500px" frameborder="0"></iframe>
+  </div>
+</div>

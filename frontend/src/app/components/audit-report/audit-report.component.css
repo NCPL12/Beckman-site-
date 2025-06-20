@@ -5,7 +5,7 @@
     background-color: #36454F;
     border-radius: 5px;
     color: white;
-    height: 500px;
+    height: 600px;
 }
 
 .heading {
@@ -108,3 +108,26 @@ ul {
     height: 38px;
     margin-top: 2px;
   }
+
+
+  input[type="datetime-local"],
+input[type="datetime-local"] {
+  appearance: none;              /* Remove native OS styles */
+  -webkit-appearance: none;      /* For Safari/Chrome */
+  -moz-appearance: none;         /* For Firefox */
+
+  border: 1px solid black;       /* Add clean border */
+  border-radius: 6px;
+  background-color: #353935;     
+  color: white;
+
+  outline: none;
+  padding: 8px 10px;
+  width: 90%;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(2); /* Makes calendar icon visible in dark mode */
+}

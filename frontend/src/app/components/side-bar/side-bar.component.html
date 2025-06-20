@@ -1,15 +1,14 @@
 <div class="side-bar">
     <div>
-        <div *ngIf="userRole === 'admin'" class="nav-item" (click)="navigateTo('list')" 
-             [ngClass]="{'active-route': isActiveRoute('list')}">
+        <div *ngIf="userRole === 'admin'" class="nav-item" (click)="navigateTo('list')"
+            [ngClass]="{'active-route': isActiveRoute('list')}">
             <img src="../../../assets/images/list-circle.png" class="nav-item-img" title="List">
         </div>
-        <div *ngIf="userRole === 'admin' || userRole === 'supervisor'" class="nav-item" (click)="navigateTo('reports')" 
-             [ngClass]="{'active-route': isActiveRoute('reports')}">
+        <div *ngIf="userRole === 'admin' || userRole === 'supervisor'" class="nav-item" (click)="navigateTo('reports')"
+            [ngClass]="{'active-route': isActiveRoute('reports')}">
             <img src="../../../assets/images/report-circle.png" class="nav-item-img" title="Reports">
         </div>
-        <div class="nav-item" (click)="navigateTo('export')" 
-             [ngClass]="{'active-route': isActiveRoute('export')}">
+        <div class="nav-item" (click)="navigateTo('export')" [ngClass]="{'active-route': isActiveRoute('export')}">
             <img src="../../../assets/images/upload.png" class="nav-item-img" title="Export">
         </div>
         <!-- <div class="nav-item" (click)="navigateTo('dashboard')" 
@@ -20,20 +19,24 @@
              [ngClass]="{'active-route': isActiveRoute('log-report')}">
             <img src="../../../assets/images/log-circle.png" class="nav-item-img" title="Log Report">
         </div> -->
-        <div *ngIf="userRole === 'admin'" class="nav-item" (click)="navigateTo('audit-report')" 
-             [ngClass]="{'active-route': isActiveRoute('audit-report')}">
+        <div *ngIf="userRole === 'admin'" class="nav-item" (click)="navigateTo('audit-report')"
+            [ngClass]="{'active-route': isActiveRoute('audit-report')}">
             <img src="../../../assets/images/log.png" class="nav-item-img" title="Audit Report">
         </div>
-       
 
-<div  class="nav-item" (click)="navigateTo('alarm-report')" 
-[ngClass]="{'active-route': isActiveRoute('alarm-report')}">
-<img src="../../../assets/images/light-blue-button-alarm-isolated-round-icon-125327412.ico" class="nav-item-img" title="Alarm Report">
-</div>
+        <div class="nav-item" (click)="navigateTo('beckman-audit')"
+            [ngClass]="{'active-route': isActiveRoute('beckman-audit')}">
+            <img src="../../../assets/images/auicon.ico" class="nav-item-img" title="beckman-audit">
+        </div>
+
+        <div class="nav-item" (click)="navigateTo('alarm-report')"
+            [ngClass]="{'active-route': isActiveRoute('alarm-report')}">
+            <img src="../../../assets/images/light-blue-button-alarm-isolated-round-icon-125327412.ico"
+                class="nav-item-img" title="Alarm Report">
+        </div>
     </div>
     <div>
-        <div class="nav-item-about" (click)="navigateTo('about')" 
-             [ngClass]="{'active-route': isActiveRoute('about')}">
+        <div class="nav-item-about" (click)="navigateTo('about')" [ngClass]="{'active-route': isActiveRoute('about')}">
             <img src="../../../assets/images/information-button.png" class="nav-item-img-about" title="About">
         </div>
     </div>

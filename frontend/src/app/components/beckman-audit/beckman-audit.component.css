@@ -1,9 +1,6 @@
 .log-container {
     padding: 20px;
   }
-  .download-section{
-    gap: 15px;
-  }
   
   .download-section input {
     padding: 6px;
@@ -99,93 +96,6 @@ ul {
     border-radius: 10px;
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-    background-color: #36454F;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 800px;
-    max-height: 80vh;
-    overflow-y: auto;
-    border-radius: 5px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #fff;
-}
-
-#pdf-viewer {
-    margin-top: 20px;
-    background-color: white;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.loading-state {
-    text-align: center;
-    padding: 50px;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.error-state {
-    text-align: center;
-    padding: 20px;
-    background-color: #ffcccc;
-    border-radius: 5px;
-}
-
-.error-state p {
-    color: #ff0000;
-    margin-bottom: 10px;
-}
-
-.error-state button {
-    background-color: #ff0000;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.error-state button:hover {
-    background-color: #cc0000;
-}
-
 ::-webkit-scrollbar-thumb:hover {
     background: blue;
 }
@@ -237,95 +147,60 @@ ul {
     background-color: #aaa;
     cursor: not-allowed;
   }
-  
   .btn-img{
     width: 25px;
     height: 25px;
     border-radius: 25px;
     cursor: pointer;
-  }.modal {
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
-  
-  .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow: auto;
-    border-radius: 10px;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
-  }
-  
-  .close-btn {
-    background: red;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    font-weight: bold;
-    cursor: pointer;
-  }
+
   .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 9999;
+    align-items: center;
+    z-index: 1000;
   }
   
   .modal-content {
-    width: 90%;
-    max-width: 1000px;
-    background: #fff;
-    padding: 15px;
+    background: white;
+    width: 75%;
+    height: 550px;
     border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
   }
   
   .modal-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 10px;
   }
   
-  .close-btn {
-    background-color: #d9534f;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+  .close-btn,
   .review-btn {
-    background-color: #2e7d32;
-    color: white;
+    padding: 6px 12px;
     border: none;
-    padding: 8px 12px;
-    cursor: pointer;
     border-radius: 4px;
-    margin-left: 10px;
+    cursor: pointer;
   }
   
-  .review-btn:hover {
-    background-color: #1b5e20;
+  .close-btn {
+    background-color: #dc3545;
+    color: white;
   }
   
-
+  .review-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
   
   input[type="datetime-local"],
 input[type="datetime-local"] {

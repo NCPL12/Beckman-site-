@@ -382,6 +382,7 @@ this.roomIdError ||
               console.log("Response: ", successResponse);
               alert("Template added successfully");
               this.resetForm();
+              this.router.navigate(['list']);  // Redirect to /list
             },
             (error) => {
               console.error('Error posting template', error);

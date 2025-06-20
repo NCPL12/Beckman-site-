@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
@@ -178,4 +178,8 @@ downloadAlarmReport() {
       if (field === 'to') this.toDate = '';
     }
   }
+    formatDateString(dateStr: string): string {
+        if (!dateStr) return '';
+        return formatDate(dateStr, 'dd-MM-yyyy HH:mm', 'en-IN');
+      }
 }

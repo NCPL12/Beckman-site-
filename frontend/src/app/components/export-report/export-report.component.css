@@ -28,10 +28,12 @@
     border: none;
     padding-left: 10px;
     width: 200px;
-    border-bottom: 2px solid black;
+    /* Remove the next line */
+    /* border-bottom: 2px solid black; */
     margin-left: 25px;
     margin-top: 12px;
 }
+
 .options-item-dropdown{
     height: 40px;
     background-color: #353935;
@@ -39,7 +41,7 @@
     border: none;
     padding-left: 10px;
     width: 212px;
-    border-bottom: 2px solid black;
+    /* border-bottom: 2px solid black; */
     margin-left: 25px;
 }
 
@@ -96,7 +98,8 @@
 
 .date-div{
     width: 260px;
-    height: 160px;
+    height: 220px;
+    padding: 20px;
     border-radius: 10px;
     background-color: #353935;
 }
@@ -159,4 +162,24 @@
 }
 input, select{
     cursor: pointer;
+}
+input[type="datetime-local"] {
+  appearance: none;              /* Remove native OS styles */
+  -webkit-appearance: none;      /* For Safari/Chrome */
+  -moz-appearance: none;         /* For Firefox */
+
+  border: 1px solid black;       /* Add clean border */
+  border-radius: 6px;
+  background-color: #353935;     
+  color: white;
+
+  outline: none;
+  padding: 8px 10px;
+  width: 90%;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(2); /* Makes calendar icon visible in dark mode */
 }

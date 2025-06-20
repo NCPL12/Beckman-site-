@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
 
 interface TemplateData {
   id: number;
@@ -52,7 +53,8 @@ export class ExportReportComponent implements OnInit {
   monthlyDay: number | null = null;
   monthlyTime: number | null = null;
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private router: Router) {}
+
 
   ngOnInit(): void {
     this.loadTemplates();
@@ -206,160 +208,7 @@ public submit(): void {
 }
 
   
-  // private exportReport(approverName: string | null): void {
-  //   const username = localStorage.getItem('username');
-  //   if (this.fromDate && this.toDate && this.assignedTo && username) {
-  //     const formattedFromDate = this.formatDate(this.fromDate);
-  //     const formattedToDate = this.formatDate(this.toDate);
 
-  //     const logPayload = {
-  //       username: username,
-  //       reportId: this.selectedTemplate.id // Include report ID here
-  //     };
-
-  //     console.log('Logging report generation:', logPayload);
-
-  //     // Log the report generation
-  //     this.http.post(`${this.apiBaseUrl}/log-generated-report`, logPayload)
-  //       .subscribe(() => {
-  //         const url = `${this.apiBaseUrl}/exportReport?id=${this.selectedTemplate.id}&fromDate=${formattedFromDate}&toDate=${formattedToDate}&username=${username}&assignedTo=${this.assignedTo}&assigned_approver=${approverName}`;
-  //         window.open(url, '_blank');
-  //       }, error => {
-  //         console.error('Error logging report generation', error);
-  //         alert('Failed to log the report generation. Please try again.');
-  //       });
-  //   } else {
-  //     alert('Please select a date range and assign the report.');
-  //   }
-  // }
-
-  // private scheduleDailyReport(): void {
-  //   const username = localStorage.getItem('username');
-  //   if (this.dailyTime && this.selectedTemplate) {
-  //     if (this.scheduledReportIds.includes(this.selectedTemplate.id)) {
-  //       alert('This report is already scheduled for daily execution.');
-  //       return;
-  //     }
-
-  //     const scheduleDetails = {
-  //       id: this.selectedTemplate.id,
-  //       name: this.selectedTemplate.name,
-  //       assignedApprover: this.assignedApprover,
-  //       assignedReview: this.assignedTo,
-  //       isApproverRequired: this.isApproverRequired,
-  //       scheduledBy: username,
-  //       dailyTime: this.dailyTime
-  //     };
-
-  //     // Log the daily report scheduling
-  //     this.http.post(`${this.apiBaseUrl}/log-scheduled-daily-report`, {
-  //       username: username,
-  //       reportType: 'daily',
-  //       templateId: this.selectedTemplate.id
-  //     }).subscribe(() => {
-  //       console.log('Daily report scheduling log created successfully.');
-  //     }, error => {
-  //       console.error('Error logging daily report scheduling', error);
-  //     });
-
-  //     // Schedule the daily report
-  //     this.http.post(`${this.apiBaseUrl}/schedule-report-daily`, scheduleDetails)
-  //       .subscribe(() => {
-  //         alert('Daily report scheduled successfully.');
-  //         this.scheduledReportIds.push(this.selectedTemplate.id);
-  //       }, error => {
-  //         console.error('Error scheduling daily report', error);
-  //       });
-  //   } else {
-  //     alert('Please select a time for the daily report and ensure all fields are filled.');
-  //   }
-  // }
-
-  // private scheduleWeeklyReport(): void {
-  //   const username = localStorage.getItem('username');
-  //   if (this.weeklyTime && this.weeklyDay && this.selectedTemplate) {
-  //     if (this.weeklyScheduledReportIds.includes(this.selectedTemplate.id)) {
-  //       alert('This report is already scheduled for weekly execution.');
-  //       return;
-  //     }
-
-  //     const scheduleDetails = {
-  //       id: this.selectedTemplate.id,
-  //       name: this.selectedTemplate.name,
-  //       assignedApprover: this.assignedApprover,
-  //       assignedReview: this.assignedTo,
-  //       isApproverRequired: this.isApproverRequired,
-  //       scheduledBy: username,
-  //       weeklyTime: this.weeklyTime,
-  //       weeklyDay: this.weeklyDay
-  //     };
-
-  //     // Log the weekly report scheduling
-  //     this.http.post(`${this.apiBaseUrl}/log-scheduled-weekly-report`, {
-  //       username: username,
-  //       reportType: 'weekly',
-  //       templateId: this.selectedTemplate.id
-  //     }).subscribe(() => {
-  //       console.log('Weekly report scheduling log created successfully.');
-  //     }, error => {
-  //       console.error('Error logging weekly report scheduling', error);
-  //     });
-
-  //     // Schedule the weekly report
-  //     this.http.post(`${this.apiBaseUrl}/schedule-report-weekly`, scheduleDetails)
-  //       .subscribe(() => {
-  //         alert('Weekly report scheduled successfully.');
-  //         this.weeklyScheduledReportIds.push(this.selectedTemplate.id);
-  //       }, error => {
-  //         console.error('Error scheduling weekly report', error);
-  //       });
-  //   } else {
-  //     alert('Please select a time and day for the weekly report and ensure all fields are filled.');
-  //   }
-  // }
-
-  // private scheduleMonthlyReport(): void {
-  //   const username = localStorage.getItem('username');
-  //   if (this.monthlyTime && this.monthlyDay && this.selectedTemplate) {
-  //     if (this.monthlyScheduledReportIds.includes(this.selectedTemplate.id)) {
-  //       alert('This report is already scheduled for monthly execution.');
-  //       return;
-  //     }
-
-  //     const scheduleDetails = {
-  //       id: this.selectedTemplate.id,
-  //       name: this.selectedTemplate.name,
-  //       assignedApprover: this.assignedApprover,
-  //       assignedReview: this.assignedTo,
-  //       isApproverRequired: this.isApproverRequired,
-  //       scheduledBy: username,
-  //       monthlyTime: this.monthlyTime,
-  //       monthlyDay: this.monthlyDay
-  //     };
-
-  //     // Log the monthly report scheduling
-  //     this.http.post('${this.apiBaseUrl}/log-scheduled-monthly-report', {
-  //       username: username,
-  //       reportType: 'monthly',
-  //       templateId: this.selectedTemplate.id
-  //     }).subscribe(() => {
-  //       console.log('Monthly report scheduling log created successfully.');
-  //     }, error => {
-  //       console.error('Error logging monthly report scheduling', error);
-  //     });
-
-  //     // Schedule the monthly report
-  //     this.http.post('${this.apiBaseUrl}/schedule-report-monthly', scheduleDetails)
-  //       .subscribe(() => {
-  //         alert('Monthly report scheduled successfully.');
-  //         this.monthlyScheduledReportIds.push(this.selectedTemplate.id);
-  //       }, error => {
-  //         console.error('Error scheduling monthly report', error);
-  //       });
-  //   } else {
-  //     alert('Please select a time and day for the monthly report and ensure all fields are filled.');
-  //   }
-  // }
 
 private exportReport(approverName: string | null): void {
   const username = localStorage.getItem('role');
@@ -450,9 +299,10 @@ private exportReport(approverName: string | null): void {
 
     }, error => {
       alert('Failed to log report generation');
-      if (newTab) {
-        newTab.close();
-      }
+     if (newTab) {
+  newTab.close();
+}
+
     });
   } else {
     alert('Please select a valid date range and template.');
@@ -600,5 +450,9 @@ private exportReport(approverName: string | null): void {
     const hours = ('0' + date.getHours()).slice(-2);
     const minutes = ('0' + date.getMinutes()).slice(-2);
     return `${month}/${day}/${year} ${hours}:${minutes}`;
+  }
+  formatDateString(dateStr: string): string {
+    if (!dateStr) return '';
+    return formatDate(dateStr, 'dd-MM-yyyy HH:mm', 'en-IN');
   }
 }
